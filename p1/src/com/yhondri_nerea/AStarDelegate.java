@@ -8,4 +8,5 @@ public interface AStarDelegate {
     void didFindPath(List<Coordinate> path);
     void didNotFindAPath();
     void didAddAnObstacle();
+    void didCloseNode();
 }

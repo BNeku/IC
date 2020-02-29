@@ -1,6 +1,7 @@
 package com.yhondri_nerea;
 
 import com.yhondri_nerea.entities.Coordinate;
+import com.yhondri_nerea.entities.CoordinateType;
 import com.yhondri_nerea.entities.Node;
 
 import java.util.ArrayList;
@@ -9,14 +10,20 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class AStar {
-    private  Coordinate initCoordinate = new Coordinate(0, 0);
-    private  Coordinate goalCoordinate = new Coordinate(5, 2);
-    private  int mazeDimension = 5;
+    private Coordinate initCoordinate = new Coordinate(0, 0);
+    private Coordinate goalCoordinate = new Coordinate(5, 2);
+    private int mazeDimension;
     private PriorityQueue<Node> openNodesPriorityQueue = new PriorityQueue<>();
     private List<Coordinate> closedCoordinateList = new ArrayList<>();
-    private List<Node> obstacleCoordinateList = new ArrayList<>();
+    private List<Coordinate> obstacleCoordinateList = new ArrayList<>();
     private char[][] boardGame;
     private List<Coordinate> neighboursArray;
+    private AStarDelegate delegate;
+
+    public AStar(AStarDelegate delegate, int mazeDimension) {
+        this.delegate = delegate;
+        this.mazeDimension = mazeDimension;
+    }
 
     public void run() {
         boardGame = drawMaze();
@@ -28,7 +35,13 @@ public class AStar {
         Node goalNode = null;
         while (goalNode == null && !openNodesPriorityQueue.isEmpty()) {
             Node currentNode = openNodesPriorityQueue.poll();
-            if (currentNode.getCoordinate().isEqualTo(goalCoordinate)) {
+            closedCoordinateList.add(currentNode.getCoordinate());
+
+            if (currentNode.getCoordinate().getColumn() == 5 && currentNode.getCoordinate().getRow() == 2) {
+                int i = 2;
+                boolean tre = false;
+            }
+            if (currentNode.getCoordinate().equals(goalCoordinate)) {
                 goalNode = currentNode;
             } else {
                 for (int i = 0; i < 7; i++) {
@@ -52,6 +65,8 @@ public class AStar {
                     }
                 }
             }
+
+            delegate.didCloseNode();
         }
 
         if (goalNode != null) {
@@ -83,7 +98,7 @@ public class AStar {
     }
 
     private boolean isValidCoordinate(Coordinate coordinate) {
-        return (coordinate.getRow() > 0 && coordinate.getRow() < mazeDimension && coordinate.getColumn() < mazeDimension);
+        return (coordinate.getRow() >= 0 && coordinate.getRow() < mazeDimension && coordinate.getColumn() >= 0 && coordinate.getColumn() < mazeDimension);
     }
 
     private boolean isObstacle(Coordinate coordinate) {
@@ -159,27 +174,39 @@ public class AStar {
         return boardGame;
     }
 
-    private Node findNodeInQueue(Node nodeToFind) {
-        boolean didFoundNode = false;
-        Node node = null;
-        List<Node> closedNodeList = new ArrayList<>();
-
-        while (!openNodesPriorityQueue.isEmpty() && !didFoundNode) {
-            Node tempNode = openNodesPriorityQueue.poll();
-            if (tempNode.equals(nodeToFind)) {
-                node = tempNode;
-                didFoundNode = true;
-            } else {
-                closedNodeList.add(tempNode);
+    //region MVC
+    public void addObstacle(Coordinate coordinate) {
+        CoordinateType coordinateType = getCoordinateType(coordinate);
+        if (coordinateType == CoordinateType.FREE) {
+            synchronized (obstacleCoordinateList) {
+                obstacleCoordinateList.add(coordinate);
             }
+            delegate.didAddAnObstacle();
         }
-
-        for (int i = 0; i < closedNodeList.size(); i++) {
-            openNodesPriorityQueue.add(closedNodeList.get(i));
-        }
-
-        return node;
     }
+
+    public CoordinateType getCoordinateType(Coordinate coordinate) {
+        if (!isValidCoordinate(coordinate)) {
+            return CoordinateType.INVALID;
+        }
+
+        if (isObstacle(coordinate)) {
+            return CoordinateType.OBSTACLE;
+        }
+
+        if (isClosed(coordinate)) {
+            return CoordinateType.CLOSED;
+        }
+
+        Node openNode = getOpenNode(coordinate);
+        if (openNode != null) {
+            return CoordinateType.OPEN;
+        }
+
+        return CoordinateType.FREE;
+    }
+
+    //endregion MVC
 
     private void expandirNode(Node fatherNode, char[][] board) {
 //        Node newNode;

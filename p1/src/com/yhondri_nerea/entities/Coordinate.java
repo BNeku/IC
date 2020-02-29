@@ -31,4 +31,15 @@ public class Coordinate {
     public boolean isEqualTo(Coordinate other) {
         return (this.getRow() == other.getRow() && this.getColumn() == other.getColumn());
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof Coordinate)) return false;
+
+        Coordinate otherCoordinate = (Coordinate)other;
+        return this.getRow() == otherCoordinate.getRow() && this.getColumn() == otherCoordinate.getColumn();
+    }
+
 }
