@@ -14,6 +14,8 @@ public class App implements Board.Delegate {
         JFrame frame = new JFrame("App");
         frame.setContentPane(new App().panelMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(600, 600));
+        frame.setMinimumSize(new Dimension(600, 600));
         frame.pack();
         frame.setVisible(true);
     }

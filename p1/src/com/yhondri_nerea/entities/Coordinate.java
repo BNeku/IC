@@ -24,4 +24,11 @@ public class Coordinate {
     public void setRow(int row) {
         this.row = row;
     }
+
+//    a negative integer, zero, or a positive integer as this object
+//     *          is less than, equal to, or greater than the specified object.
+//
+    public boolean isEqualTo(Coordinate other) {
+        return (this.getRow() == other.getRow() && this.getColumn() == other.getColumn());
+    }
 }
