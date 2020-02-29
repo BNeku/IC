@@ -4,7 +4,9 @@ public enum CoordinateType {
     INVALID,
     FREE,
     OBSTACLE,
+    PENALTY,
     PATH,
     OPEN,
-    CLOSED
+    CLOSED,
+    POINT
 }

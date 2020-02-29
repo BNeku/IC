@@ -1,5 +1,7 @@
 package com.yhondri_nerea.entities;
 
+import java.util.Objects;
+
 public class Coordinate {
     private int column;
     private int row;
@@ -28,8 +30,10 @@ public class Coordinate {
 //    a negative integer, zero, or a positive integer as this object
 //     *          is less than, equal to, or greater than the specified object.
 //
-    public boolean isEqualTo(Coordinate other) {
-        return (this.getRow() == other.getRow() && this.getColumn() == other.getColumn());
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(column, row);
     }
 
     @Override

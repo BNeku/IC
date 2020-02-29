@@ -18,6 +18,7 @@ public class App implements Board.Delegate, AStarDelegate {
     private JButton resetButton;
     private AStar aStar;
     private Board boardView;
+    private double penaltyValue = 10;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("App");
@@ -70,7 +71,7 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public void didClickOnCoordinate(Coordinate coordinate) {
-
+        aStar.addPoint(coordinate);
     }
 
     @Override
@@ -80,7 +81,7 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public void onCellAlt(Coordinate coordinate) {
-
+        aStar.addPenalty(coordinate, penaltyValue);
     }
 
     @Override
@@ -103,7 +104,32 @@ public class App implements Board.Delegate, AStarDelegate {
     }
 
     @Override
+    public void didAddPoint() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                boardView.reloadData();
+            }
+        });
+    }
+
+    @Override
+    public void onAddPointError() {
+
+    }
+
+    @Override
     public void didAddAnObstacle() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                boardView.reloadData();
+            }
+        });
+    }
+
+    @Override
+    public void didAddPenalty() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

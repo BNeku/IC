@@ -4,10 +4,7 @@ import com.yhondri_nerea.entities.Coordinate;
 import com.yhondri_nerea.entities.CoordinateType;
 import com.yhondri_nerea.entities.Node;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class AStar {
     private Coordinate initCoordinate = new Coordinate(0, 0);
@@ -16,9 +13,12 @@ public class AStar {
     private PriorityQueue<Node> openNodesPriorityQueue = new PriorityQueue<>();
     private List<Coordinate> closedCoordinateList = new ArrayList<>();
     private List<Coordinate> obstacleCoordinateList = new ArrayList<>();
+    private List<Coordinate> pointList = new ArrayList<>();
+    private HashMap<Coordinate, Double> penaltyMap = new HashMap<>();
     private char[][] boardGame;
     private List<Coordinate> neighboursArray;
     private AStarDelegate delegate;
+    private double penalty = 10;
 
     public AStar(AStarDelegate delegate, int mazeDimension) {
         this.delegate = delegate;
@@ -37,10 +37,6 @@ public class AStar {
             Node currentNode = openNodesPriorityQueue.poll();
             closedCoordinateList.add(currentNode.getCoordinate());
 
-            if (currentNode.getCoordinate().getColumn() == 5 && currentNode.getCoordinate().getRow() == 2) {
-                int i = 2;
-                boolean tre = false;
-            }
             if (currentNode.getCoordinate().equals(goalCoordinate)) {
                 goalNode = currentNode;
             } else {
@@ -50,11 +46,19 @@ public class AStar {
                         continue;
                     }
 
-                    double distanceFromStartToNeighbour = distanceBetween(currentNode.getCoordinate(), neighbourCoordinate) + currentNode.getH();
+                    Double penalty = getPenaltyPointAt(currentNode.getCoordinate());
+                    if (penalty == null) {
+                        penalty = 0.0;
+                    }
+                    double distanceFromStartToNeighbour = distanceBetween(currentNode.getCoordinate(), neighbourCoordinate) + currentNode.getH() + penalty;
                     Node neighbourNode = getOpenNode(neighbourCoordinate);
 
                     if (neighbourNode == null) {
-                        double distanceToEnd = distanceBetween(neighbourCoordinate, goalCoordinate);
+                        penalty = getPenaltyPointAt(neighbourCoordinate);
+                        if (penalty == null) {
+                            penalty = 0.0;
+                        }
+                        double distanceToEnd = distanceBetween(neighbourCoordinate, goalCoordinate) + penalty;
                         Node newNeighbourNode = new Node(neighbourCoordinate, distanceToEnd, distanceFromStartToNeighbour);
                         newNeighbourNode.setParentNode(currentNode);
                         openNodesPriorityQueue.add(newNeighbourNode);
@@ -123,6 +127,12 @@ public class AStar {
         return currentNode;
     }
 
+    private Double getPenaltyPointAt(Coordinate coordinate) {
+        synchronized (coordinate) {
+            return penaltyMap.get(coordinate);
+        }
+    }
+
     private void updateNode(Node node) {
         openNodesPriorityQueue.remove(node); //Elimina el node ccon esa coordinate.
         openNodesPriorityQueue.add(node); //Lo añadimos con su nueva h.
@@ -175,11 +185,42 @@ public class AStar {
     }
 
     //region MVC
+    public void addPoint(Coordinate coordinate) {
+        if (pointList.size() == 2) {
+            delegate.onAddPointError();
+            return;
+        }
+
+        if (pointList.size() == 0) {
+            initCoordinate = coordinate;
+        } else {
+            goalCoordinate = coordinate;
+        }
+
+        CoordinateType coordinateType = getCoordinateType(coordinate);
+        if (coordinateType == CoordinateType.FREE) {
+            synchronized (pointList) {
+                pointList.add(coordinate);
+            }
+            delegate.didAddPenalty();
+        }
+    }
+
     public void addObstacle(Coordinate coordinate) {
         CoordinateType coordinateType = getCoordinateType(coordinate);
         if (coordinateType == CoordinateType.FREE) {
             synchronized (obstacleCoordinateList) {
                 obstacleCoordinateList.add(coordinate);
+            }
+            delegate.didAddPenalty();
+        }
+    }
+
+    public void addPenalty(Coordinate coordinate, double penaltyValue) {
+        CoordinateType coordinateType = getCoordinateType(coordinate);
+        if (coordinateType == CoordinateType.FREE) {
+            synchronized (penaltyMap) {
+                penaltyMap.put(coordinate, penaltyValue);
             }
             delegate.didAddAnObstacle();
         }
@@ -188,6 +229,11 @@ public class AStar {
     public CoordinateType getCoordinateType(Coordinate coordinate) {
         if (!isValidCoordinate(coordinate)) {
             return CoordinateType.INVALID;
+        }
+
+        Integer index = getPointIndexAt(coordinate);
+        if (index != null) {
+            return CoordinateType.POINT;
         }
 
         if (isObstacle(coordinate)) {
@@ -203,7 +249,23 @@ public class AStar {
             return CoordinateType.OPEN;
         }
 
+        Double penalty = getPenaltyPointAt(coordinate);
+        if (penalty != null) {
+            return CoordinateType.PENALTY;
+        }
+
         return CoordinateType.FREE;
+    }
+
+    private Integer getPointIndexAt(Coordinate coordinate) {
+        synchronized (pointList) {
+            int index = pointList.indexOf(coordinate);
+            if(index >= 0)  {
+                return index;
+            } else {
+                return null;
+            }
+        }
     }
 
     //endregion MVC

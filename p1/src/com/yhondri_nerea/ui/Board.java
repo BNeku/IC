@@ -89,10 +89,10 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
     public void mousePressed(MouseEvent e) {
         selectedCoordinate = getCoordinate(e.getX(), e.getY());
         if (selectedCoordinate != null) {
-            if (e.getButton() == 1) {
-                delegate.onCellDragged(selectedCoordinate);
-            } else if (e.getButton() == 2 || e.isAltDown()) {
+            if (e.getButton() == 2 || e.isAltDown()) {
                 delegate.onCellAlt(selectedCoordinate);
+            } else if (e.getButton() == 1) {
+                delegate.onCellDragged(selectedCoordinate);
             }
         }
 
@@ -182,7 +182,11 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
                 break;
             case CLOSED:
-                graphics.setColor(Color.gray);
+                graphics.setColor(Color.magenta);
+                graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
+                break;
+            case PENALTY:
+                graphics.setColor(Color.orange);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
                 break;
             case PATH:
