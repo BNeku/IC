@@ -190,7 +190,11 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
                 break;
             case PATH:
-                graphics.setColor(Color.PINK);
+                graphics.setColor(Color.CYAN);
+                graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
+                break;
+            case POINT:
+                graphics.setColor(Color.BLUE);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
                 break;
         }

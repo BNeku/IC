@@ -95,7 +95,12 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public void didFindPath(List<Coordinate> path) {
-
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                boardView.reloadData();
+            }
+        });
     }
 
     @Override

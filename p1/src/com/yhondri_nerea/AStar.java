@@ -7,8 +7,8 @@ import com.yhondri_nerea.entities.Node;
 import java.util.*;
 
 public class AStar {
-    private Coordinate initCoordinate = new Coordinate(0, 0);
-    private Coordinate goalCoordinate = new Coordinate(5, 2);
+    private Coordinate initCoordinate;
+    private Coordinate goalCoordinate;
     private int mazeDimension;
     private PriorityQueue<Node> openNodesPriorityQueue = new PriorityQueue<>();
     private List<Coordinate> closedCoordinateList = new ArrayList<>();
@@ -19,6 +19,7 @@ public class AStar {
     private List<Coordinate> neighboursArray;
     private AStarDelegate delegate;
     private double penalty = 10;
+    private List<Coordinate> pathToGoal = new ArrayList<>();
 
     public AStar(AStarDelegate delegate, int mazeDimension) {
         this.delegate = delegate;
@@ -28,6 +29,7 @@ public class AStar {
     public void run() {
         boardGame = drawMaze();
         setupNeighboursArray();
+
 
         Node initialNode = new Node(initCoordinate, distanceBetween(initCoordinate, goalCoordinate), 0.0);
         openNodesPriorityQueue.add(initialNode);
@@ -40,7 +42,7 @@ public class AStar {
             if (currentNode.getCoordinate().equals(goalCoordinate)) {
                 goalNode = currentNode;
             } else {
-                for (int i = 0; i < 7; i++) {
+                for (int i = 0; i < 8; i++) {
                     Coordinate neighbourCoordinate = getNeighbourCoordinate(currentNode.getCoordinate(), i);
                     if (neighbourCoordinate == null || isObstacle(neighbourCoordinate) || isClosed(neighbourCoordinate)) {
                         continue;
@@ -74,18 +76,19 @@ public class AStar {
         }
 
         if (goalNode != null) {
-            List<Coordinate> pathToGoal = new ArrayList<>();
             Node currentNode = goalNode;
             while (currentNode != null) {
                 pathToGoal.add(0, currentNode.getCoordinate());
                 currentNode = currentNode.getParentNode();
             }
+
+            delegate.didFindPath(pathToGoal);
         }
     }
 
     private double distanceBetween(Coordinate coordinate1, Coordinate coordinate2) {
-        double x = (coordinate1.getRow() - coordinate2.getRow());
-        double y = (coordinate1.getColumn() - coordinate2.getColumn());
+        double x = (coordinate1.getColumn() - coordinate2.getColumn());
+        double y = (coordinate1.getRow() - coordinate2.getRow());
         double z = (x*x) + (y*y);
         return Math.sqrt(z);
     }
@@ -95,7 +98,7 @@ public class AStar {
         Coordinate neighbourCoordinate = new Coordinate(coordinate.getColumn() + neighbourTempCoordinate.getColumn(), coordinate.getRow() + neighbourTempCoordinate.getRow());
 
         if (isValidCoordinate(neighbourCoordinate)) {
-            return  neighbourCoordinate;
+            return neighbourCoordinate;
         } else {
             return null;
         }
@@ -106,25 +109,37 @@ public class AStar {
     }
 
     private boolean isObstacle(Coordinate coordinate) {
-        return obstacleCoordinateList.contains(coordinate);
+        synchronized (obstacleCoordinateList) {
+            return obstacleCoordinateList.contains(coordinate);
+        }
     }
 
     private boolean isClosed(Coordinate coordinate) {
-        return closedCoordinateList.contains(coordinate);
+        synchronized (closedCoordinateList) {
+            return closedCoordinateList.contains(coordinate);
+        }
+    }
+
+    private boolean isPath(Coordinate coordinate) {
+        synchronized (pathToGoal) {
+            return pathToGoal.contains(coordinate);
+        }
     }
 
     private Node getOpenNode(Coordinate coordinate) {
         Iterator openNodesIterator = openNodesPriorityQueue.iterator();
         boolean stop = false;
-        Node currentNode = null;
+        Node currentNode;
+        Node foundNode = null;
 
         while (openNodesIterator.hasNext() && !stop) {
             currentNode = (Node) openNodesIterator.next();
             if (currentNode.getCoordinate() == coordinate) {
+                foundNode = currentNode;
                 stop = true;
             }
         }
-        return currentNode;
+        return foundNode;
     }
 
     private Double getPenaltyPointAt(Coordinate coordinate) {
@@ -238,6 +253,10 @@ public class AStar {
 
         if (isObstacle(coordinate)) {
             return CoordinateType.OBSTACLE;
+        }
+
+        if (isPath(coordinate)) {
+            return CoordinateType.PATH;
         }
 
         if (isClosed(coordinate)) {
