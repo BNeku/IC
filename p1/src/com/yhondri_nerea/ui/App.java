@@ -4,11 +4,8 @@ import com.yhondri_nerea.AStar;
 import com.yhondri_nerea.AStarDelegate;
 import com.yhondri_nerea.entities.Coordinate;
 import com.yhondri_nerea.entities.CoordinateType;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class App implements Board.Delegate, AStarDelegate {
@@ -61,12 +58,12 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public int getNumberOfRows() {
-        return 10;
+        return 5;
     }
 
     @Override
     public int getNumberOfColums() {
-        return 10;
+        return 5;
     }
 
     @Override

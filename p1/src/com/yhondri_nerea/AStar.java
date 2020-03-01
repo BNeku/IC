@@ -217,7 +217,7 @@ public class AStar {
             synchronized (pointList) {
                 pointList.add(coordinate);
             }
-            delegate.didAddPenalty();
+            delegate.didAddPoint();
         }
     }
 
