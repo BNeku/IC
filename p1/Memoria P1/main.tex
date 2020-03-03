@@ -1,9 +1,9 @@
-\documentclass[es]{article}
+\documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
-\usepackage[dvipsnames]{xcolor}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{hyperref}
 
 \title{Memoria Algoritmo A Estrella}
 \author{Nerea Jiménez González\\ Yhondri Acosta Novas}
@@ -21,7 +21,6 @@
 \tableofcontents
 \newpage
 
-\section{Descripción del sistema}
 \section{Detalles de la implementación}
 \subsection{Lenguaje utilizado}
 Para la implementación, se utiliza el lenguaje JAVA.
@@ -51,18 +50,29 @@ Cuando las coordenadas del \textit{goalNode} coinciden con las coordenadas del n
 \subsection{Ampliaciones realizadas}
 Las ampliaciones realizadas son las siguientes:
 \subsubsection{Casillas inaccesibles}
-Son las casillas que se colorean de color \colorbox{red}{rojo}. Estas casillas actúan como un muro, y no se puede pasar por ellas.
+Son las casillas nombradas como \textbf{Pared}. Estas casillas actúan como un muro, y no se puede pasar por ellas.
 \subsubsection{Casillas con penalización}
-Estás casillas conllevan una penalización al pasar por ellas, por lo que puede que el primer camino que pensamos que es el óptimo para llegar a la casilla meta, deje de serlo por esto. Las casillas son de color \colorbox{yellow}{amarillo}, y la penalización sobre la f del nodo es de 10.
+Estás casillas conllevan una penalización al pasar por ellas, por lo que puede que el primer camino que pensamos que es el óptimo para llegar a la casilla meta, deje de serlo por esto. Las casillas están nombradas como \textbf{Barro}, y la penalización sobre la f del nodo es de 10.
 \subsubsection{Casillas de paso obligatorio}
-Estas casillas son casillas por las que hay que pasar obligatoriamente en nuestro camino, \textit{waypoints}.
+Estas casillas son casillas por las que hay que pasar obligatoriamente en nuestro camino, \textit{waypoints}. Estas casillas están nombradas como \textbf{Castillo}.
 \subsection{Otros elementos de interés}
+
 \section{Código ejecutable}
 Se adjunta en el archivo tipo zip con nombre \textbf{Código} zip, y un ejecutable tipo jar con nombre \textbf{Ejecutable}.
+\subsection{Simulación de ejemplo}
+
 \section{Manual de usuario}
 Para empezar con la aplicación, clickeamos dos veces sobre el archivo ejecutable.\\
 A la hora de marcar las casillas, seleccionaremos en el menú izquierdo, bajo los botones de empezar y reiniciar, el tipo de casilla a dibujar.\\
-Una vez seleccionado el tipo de casilla que queremos, clickeamos las casillas que queremos que sean de dicho tipo.\\
+Una vez seleccionado el tipo de casilla que queremos, clickeamos las casillas que queremos que sean de dicho tipo. Los tipos de casilla son los siguientes:\\
+\begin{itemize}
+    \item \textbf{Inicio}: marca donde va a comenzar.
+    \item \textbf{Meta}: marca el final.
+    \item \textbf{Pared}: casillas por las que no se pueden pasar.
+    \item \textbf{Barro}: casillas que tienen penalización al pasar por ellas.
+    \item \textbf{Castillo}: casillas por las que es obligatorio pasar antes de llegar a la meta.
+\end{itemize}
+Es obligatorio poner un inicio y una meta.\\
 Una vez satisfechos con nuestro tablero, clickeamos en el botón \textit{Empezar}.\\
 Si queremos limpiar el mapa, clickeamos sobre el botón \textit{Reiniciar}.
 \end{document}
