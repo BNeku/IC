@@ -1,0 +1,78 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+
+\title{Memoria Algoritmo A Estrella}
+\author{Nerea Jiménez González\\ Yhondri Acosta Novas}
+\date{Marzo 2020}
+
+\begin{document}
+
+\maketitle
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{3-2016-07-21-Marca UCM Monocromo Negro.png}
+\end{figure}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Detalles de la implementación}
+\subsection{Lenguaje utilizado}
+Para la implementación, se utiliza el lenguaje JAVA.
+\subsection{Procedimiento seguido para la implementación}
+El procedimiento que se ha seguido para la implementación ha sido el siguiente:\\
+En primer lugar, se resolvió el ejemplo dado en el enunciado, y se comenzó a programar este ejemplo en concreto. Durante esta explicación, nos referimos a nodos y casillas. El nodo representa la casilla, por lo que puede que se utilicen ambas denominaciones en algún momento.\\
+Empezamos por definir las entidades a tener en consideración, las cuales son:
+\begin{itemize}
+    \item \textbf{Coordinate}\\
+    Coordenada compuesta por fila y columna, para evitar confusiones a la hora de programar.
+    \item \textbf{Coordinate type}\\
+    Enumerado utilizado para saber que tipo de movimiento es para dibujar en el tablero este.
+    \item \textbf{Node}\\
+    Contiene toda la información del nodo: g, h, f y coordenada, que es la casilla del tablero en cuestión.
+\end{itemize}
+Comenzamos por las comprobaciones a donde se puede expandir el nodo de forma que, no se puede expandir donde:
+\begin{itemize}
+    \item Casillas inaccesibles\\
+    Hablaremos sobre ellas en el apartado de ampliaciones.
+    \item Casillas fuera del tablero
+\end{itemize}
+Una vez tenemos las casillas a donde podemos avanzar, estas las decidimos guardar en una cola de nodos de prioridad ordenada de menor a mayor por f. Esta cola, \textit{openNodesPriorityQueue}, se correspondería a la lista abierta.\\ Para guardar los nodos que vamos cerrando, lo que se correspondería a la lista cerrada, utilizamos una lista de coordenadas, \textit{closedCoordinateList}, ya que una vez que cerramos un nodo, sólo nos interesa su coordenada, que sería como el nombre del nodo.\\
+El algoritmo en sí es un bucle\textit{ while}, del cual se sale cuando no nos quedan nodos que recorrer en \textit{openNodesPriorityQueue}, o bien cuando el nodo meta, \textit{goalNode}, es null.\\
+Si se sale del bucle porque no tenemos para nodos que recorrer, y no se ha llegado a la casilla meta, \textit{goalNode=null}, no existirá un camino.\\
+Cuando las coordenadas del \textit{goalNode} coinciden con las coordenadas del nodo Meta, \textit{goalCoordinate}, se ha encontrado el mejor camino posible y el algoritmo termina. 
+
+\subsection{Ampliaciones realizadas}
+Las ampliaciones realizadas son las siguientes:
+\subsubsection{Casillas inaccesibles}
+Son las casillas nombradas como \textbf{Pared}. Estas casillas actúan como un muro, y no se puede pasar por ellas.
+\subsubsection{Casillas con penalización}
+Estás casillas conllevan una penalización al pasar por ellas, por lo que puede que el primer camino que pensamos que es el óptimo para llegar a la casilla meta, deje de serlo por esto. Las casillas están nombradas como \textbf{Barro}, y la penalización sobre la f del nodo es de 10.
+\subsubsection{Casillas de paso obligatorio}
+Estas casillas son casillas por las que hay que pasar obligatoriamente en nuestro camino, \textit{waypoints}. Estas casillas están nombradas como \textbf{Castillo}.
+\subsection{Otros elementos de interés}
+
+\section{Código ejecutable}
+Se adjunta en el archivo tipo zip con nombre \textbf{Código} zip, y un ejecutable tipo jar con nombre \textbf{Ejecutable}.
+\subsection{Simulación de ejemplo}
+
+\section{Manual de usuario}
+Para empezar con la aplicación, clickeamos dos veces sobre el archivo ejecutable.\\
+A la hora de marcar las casillas, seleccionaremos en el menú izquierdo, bajo los botones de empezar y reiniciar, el tipo de casilla a dibujar.\\
+Una vez seleccionado el tipo de casilla que queremos, clickeamos las casillas que queremos que sean de dicho tipo. Los tipos de casilla son los siguientes:\\
+\begin{itemize}
+    \item \textbf{Inicio}: marca donde va a comenzar.
+    \item \textbf{Meta}: marca el final.
+    \item \textbf{Pared}: casillas por las que no se pueden pasar.
+    \item \textbf{Barro}: casillas que tienen penalización al pasar por ellas.
+    \item \textbf{Castillo}: casillas por las que es obligatorio pasar antes de llegar a la meta.
+\end{itemize}
+Es obligatorio poner un inicio y una meta.\\
+Una vez satisfechos con nuestro tablero, clickeamos en el botón \textit{Empezar}.\\
+Si queremos limpiar el mapa, clickeamos sobre el botón \textit{Reiniciar}.
+\end{document}
