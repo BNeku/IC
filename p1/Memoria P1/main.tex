@@ -49,21 +49,28 @@ Cuando las coordenadas del \textit{goalNode} coinciden con las coordenadas del n
 
 \subsection{Ampliaciones realizadas}
 Las ampliaciones realizadas son las siguientes:
-\subsubsection{Casillas inaccesibles}
-Son las casillas nombradas como \textbf{Pared}. Estas casillas actúan como un muro, y no se puede pasar por ellas.
+\subsubsection{Casillas con obstáculos}
+Son las casillas nombradas como \textbf{Pared}. Estas casillas actúan como un muro, y no se puede pasar por ellas.\\
+Para esta ampliación, se ha utilizado una lista, \textit{obstacleCoordinateList}, en donde se guardan las coordenadas de los obstáculos. Cada vez que se intenta acceder a una nueva casilla, se consulta si dicha coordenada está en la lista de obstáculos de forma que si está, no se puede expandir a esta casilla. En caso contrario, sí se puede.
 \subsubsection{Casillas con penalización}
-Estás casillas conllevan una penalización al pasar por ellas, por lo que puede que el primer camino que pensamos que es el óptimo para llegar a la casilla meta, deje de serlo por esto. Las casillas están nombradas como \textbf{Barro}, y la penalización sobre la f del nodo es de 10.
+Estás casillas conllevan una penalización al pasar por ellas, por lo que puede que el primer camino que pensamos que es el óptimo para llegar a la casilla meta, deje de serlo por esto. Las casillas están nombradas como \textbf{Barro}, y la penalización sobre la f del nodo es de 10.\\
+Para esta ampliación, hemos utilizado un hashmap, \textit{penaltyMap}, en el cual guardamos la coordenada de la casilla junto a su penalización, por si se quiere ampliar de forma que cada casilla con penalización tenga diferentes penalizaciones.
+Al igual que con las casillas con obstáculos, cada vez que se quiera expandir a una casilla se consulta si esta coordenada está en el hashmap. En el caso de estar, se aplica a la f la penalización.
 \subsubsection{Casillas de paso obligatorio}
-Estas casillas son casillas por las que hay que pasar obligatoriamente en nuestro camino, \textit{waypoints}. Estas casillas están nombradas como \textbf{Castillo}.
+Estas casillas son casillas por las que hay que pasar obligatoriamente en nuestro camino en el orden que el usuario las coloca, \textit{waypoints}. Estas casillas están nombradas como \textbf{Castillo}.\\
+Para esta ampliación, hemos utilizado una lista, \textit{waypointlist}, en donde guardamos las coordenadas de los puntos donde hay que pasar obligatorioamente. Introducimos las coordenadas en el orden que el usuario las coloca, y se sacan en el mismo orden. Lo que hacemos es hacer que el primer waypoint sea nuestra meta provisional, de forma que el árbol se expande hasta encontrar un camino. Una vez llegados a esta meta, pasa a ser el inicio y el siguiente waypoint la meta. Se sigue de esta forma hasta que no nos quedan waypoints, y nuestra meta es la que se colocó inicialmente como tal.
 \subsection{Otros elementos de interés}
 
 \section{Código ejecutable}
 Se adjunta en el archivo tipo zip con nombre \textbf{Código} zip, y un ejecutable tipo jar con nombre \textbf{Ejecutable}.
-\subsection{Simulación de ejemplo}
+\subsection{Simulación ejemplo enunciado}
+\subsection{Simulación sin obstáculos}
+\subsection{Simulación con penalización}
+\subsection{Simulación con waypoints}
 
 \section{Manual de usuario}
 Para empezar con la aplicación, clickeamos dos veces sobre el archivo ejecutable.\\
-A la hora de marcar las casillas, seleccionaremos en el menú izquierdo, bajo los botones de empezar y reiniciar, el tipo de casilla a dibujar.\\
+A la hora de marcar las casillas, seleccionaremos en el menú izquierdo, bajo los botones de iniciar y reiniciar, el tipo de casilla a dibujar.\\
 Una vez seleccionado el tipo de casilla que queremos, clickeamos las casillas que queremos que sean de dicho tipo. Los tipos de casilla son los siguientes:\\
 \begin{itemize}
     \item \textbf{Inicio}: marca donde va a comenzar.
@@ -74,5 +81,6 @@ Una vez seleccionado el tipo de casilla que queremos, clickeamos las casillas qu
 \end{itemize}
 Es obligatorio poner un inicio y una meta.\\
 Una vez satisfechos con nuestro tablero, clickeamos en el botón \textit{Empezar}.\\
-Si queremos limpiar el mapa, clickeamos sobre el botón \textit{Reiniciar}.
+Si queremos limpiar el mapa, clickeamos sobre el botón \textit{Reiniciar}.\\
+Las casillas exploradas aparecerán de color rosa magenta.
 \end{document}
