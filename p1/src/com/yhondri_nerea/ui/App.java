@@ -24,6 +24,7 @@ public class App implements Board.Delegate, AStarDelegate {
     private Board boardView;
     private double penaltyValue = 10;
     private CoordinateType selectedCoordinateType;
+    private boolean finished = false;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("App");
@@ -50,7 +51,10 @@ public class App implements Board.Delegate, AStarDelegate {
     }
 
     private void setupListeners() {
-        startButton.addActionListener(e -> aStar.run());
+        startButton.addActionListener(e -> {
+            finished = true;
+            aStar.run();
+        });
 
         resetButton.addActionListener(e -> {
             resetGame();
@@ -81,6 +85,7 @@ public class App implements Board.Delegate, AStarDelegate {
 
     public void resetGame() {
         aStar = new AStar(this, getNumberOfColums());
+        finished = false;
     }
 
     //region Board.Delegate
@@ -97,6 +102,9 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public void didClickOnCoordinate(Coordinate coordinate) {
+        if (finished) {
+            return;
+        }
 
         switch (selectedCoordinateType) {
             case OBSTACLE:
