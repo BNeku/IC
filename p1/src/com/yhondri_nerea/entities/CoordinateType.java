@@ -8,5 +8,8 @@ public enum CoordinateType {
     PATH,
     OPEN,
     CLOSED,
-    POINT
+    POINT,
+    WAYPOINT,
+    START,
+    GOAL
 }

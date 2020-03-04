@@ -3,7 +3,6 @@ package com.yhondri_nerea;
 import com.yhondri_nerea.entities.Coordinate;
 import com.yhondri_nerea.entities.CoordinateType;
 import com.yhondri_nerea.entities.Node;
-
 import java.util.*;
 
 public class AStar {
@@ -15,10 +14,8 @@ public class AStar {
     private List<Coordinate> obstacleCoordinateList = new ArrayList<>();
     private List<Coordinate> pointList = new ArrayList<>();
     private HashMap<Coordinate, Double> penaltyMap = new HashMap<>();
-    private char[][] boardGame;
     private List<Coordinate> neighboursArray;
     private AStarDelegate delegate;
-    private double penalty = 10;
     private List<Coordinate> pathToGoal = new ArrayList<>();
 
     public AStar(AStarDelegate delegate, int mazeDimension) {
@@ -27,9 +24,7 @@ public class AStar {
     }
 
     public void run() {
-        boardGame = drawMaze();
         setupNeighboursArray();
-
 
         Node initialNode = new Node(initCoordinate, distanceBetween(initCoordinate, goalCoordinate), 0.0);
         openNodesPriorityQueue.add(initialNode);
@@ -165,40 +160,6 @@ public class AStar {
         neighboursArray.add(new Coordinate(1, 1));
     }
 
-    private void printwMaze() {
-        int row, col;
-        for (row = 0; row < boardGame.length; row++) {
-            for (col = 0; col < boardGame[row].length; col++) {
-                boardGame[row][col] = '.';
-            }
-        }
-
-        for (row = 0; row < boardGame.length; row++) {
-            System.out.println();
-            for (col = 0; col < boardGame[row].length; col++) {
-                System.out.print(boardGame[row][col]);
-            }
-        }
-    }
-
-    private char[][] drawMaze() {
-        int row, col;
-        char[][] boardGame = new char[mazeDimension][mazeDimension];
-        for (row = 0; row < boardGame.length; row++) {
-            for (col = 0; col < boardGame[row].length; col++) {
-                boardGame[row][col] = '.';
-            }
-        }
-
-        for (row = 0; row < boardGame.length; row++) {
-            System.out.println();
-            for (col = 0; col < boardGame[row].length; col++) {
-                System.out.print(boardGame[row][col]);
-            }
-        }
-        return boardGame;
-    }
-
     //region MVC
     public void addPoint(Coordinate coordinate) {
         if (pointList.size() == 2) {
@@ -241,14 +202,38 @@ public class AStar {
         }
     }
 
+    public void addStart(Coordinate coordinate) {
+        CoordinateType coordinateType = getCoordinateType(coordinate);
+        if (coordinateType == CoordinateType.FREE) {
+            initCoordinate = coordinate;
+            delegate.didAddPoint();
+        }
+    }
+
+    public void addGoal(Coordinate coordinate) {
+        CoordinateType coordinateType = getCoordinateType(coordinate);
+        if (coordinateType == CoordinateType.FREE) {
+            goalCoordinate = coordinate;
+            delegate.didAddPoint();
+        }
+    }
+
+    public void addWaypoint(Coordinate coordinate) {
+
+    }
+
     public CoordinateType getCoordinateType(Coordinate coordinate) {
         if (!isValidCoordinate(coordinate)) {
             return CoordinateType.INVALID;
         }
 
-        Integer index = getPointIndexAt(coordinate);
-        if (index != null) {
-            return CoordinateType.POINT;
+        //Integer index = getPointIndexAt(coordinate);
+        if (coordinate.equals(initCoordinate)) {
+            return CoordinateType.START;
+        }
+
+        if (coordinate.equals(goalCoordinate)) {
+            return CoordinateType.GOAL;
         }
 
         if (isObstacle(coordinate)) {
@@ -409,4 +394,6 @@ public class AStar {
 //            }
 //        }
     }
+
+
 }

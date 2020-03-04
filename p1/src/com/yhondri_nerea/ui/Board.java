@@ -26,12 +26,12 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
     }
 
     interface Delegate {
-        public int getNumberOfRows();
-        public int getNumberOfColums();
-        public void didClickOnCoordinate(Coordinate coordinate);
-        public void onCellDragged(Coordinate coordinate);
-        public void onCellAlt(Coordinate coordinate);
-        public CoordinateType getCoordinateType(Coordinate coordinate);
+        int getNumberOfRows();
+        int getNumberOfColums();
+        void didClickOnCoordinate(Coordinate coordinate);
+        void onCellDragged(Coordinate coordinate);
+        void onCellAlt(Coordinate coordinate);
+        CoordinateType getCoordinateType(Coordinate coordinate);
     }
 
     public Board(Delegate delegate) {
@@ -61,11 +61,6 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
         if (newSelectedCoordinate == null || selectedCoordinate == null || newSelectedCoordinate != selectedCoordinate) {
             if (newSelectedCoordinate != null) {
                 selectedCoordinate = newSelectedCoordinate;
-                if (e.getButton() == 1) {
-
-                } else if (e.getButton() == 2 || e.isAltDown()) {
-
-                }
             }
         }
 
@@ -89,23 +84,15 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
     public void mousePressed(MouseEvent e) {
         selectedCoordinate = getCoordinate(e.getX(), e.getY());
         if (selectedCoordinate != null) {
-            if (e.getButton() == 2 || e.isAltDown()) {
-                delegate.onCellAlt(selectedCoordinate);
-            } else if (e.getButton() == 1) {
-                delegate.onCellDragged(selectedCoordinate);
-            }
+            delegate.didClickOnCoordinate(selectedCoordinate);
         }
-
         repaint();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         if (selectedCoordinate != null) {
-            if (e.getButton() == 3) {
-                delegate.didClickOnCoordinate(selectedCoordinate);
-            }
-
+            delegate.didClickOnCoordinate(selectedCoordinate);
             selectedCoordinate = null;
             repaint();
         }
@@ -195,6 +182,14 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
                 break;
             case POINT:
                 graphics.setColor(Color.BLUE);
+                graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
+                break;
+            case START:
+                graphics.setColor(Color.PINK);
+                graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
+                break;
+            case GOAL:
+                graphics.setColor(Color.YELLOW);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
                 break;
         }

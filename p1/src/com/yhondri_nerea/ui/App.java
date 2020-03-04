@@ -6,6 +6,8 @@ import com.yhondri_nerea.entities.Coordinate;
 import com.yhondri_nerea.entities.CoordinateType;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 public class App implements Board.Delegate, AStarDelegate {
@@ -13,9 +15,15 @@ public class App implements Board.Delegate, AStarDelegate {
     private JPanel boardContainerPanel;
     private JButton startButton;
     private JButton resetButton;
+    private JButton paredButton;
+    private JButton inicioButton;
+    private JButton barroButton;
+    private JButton metaButton;
+    private JButton castilloButton;
     private AStar aStar;
     private Board boardView;
     private double penaltyValue = 10;
+    private CoordinateType selectedCoordinateType;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("App");
@@ -48,6 +56,27 @@ public class App implements Board.Delegate, AStarDelegate {
             resetGame();
             boardView.reloadData();
         });
+
+        paredButton.addActionListener(e -> {
+            selectedCoordinateType = CoordinateType.OBSTACLE;
+        });
+
+        barroButton.addActionListener(e -> {
+            selectedCoordinateType = CoordinateType.PENALTY;
+        });
+
+        inicioButton.addActionListener(e -> {
+            selectedCoordinateType = CoordinateType.START;
+        });
+
+        metaButton.addActionListener(e -> {
+            selectedCoordinateType = CoordinateType.GOAL;
+        });
+
+        castilloButton.addActionListener(e -> {
+            selectedCoordinateType = CoordinateType.WAYPOINT;
+        });
+
     }
 
     public void resetGame() {
@@ -68,7 +97,28 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public void didClickOnCoordinate(Coordinate coordinate) {
-        aStar.addPoint(coordinate);
+
+        switch (selectedCoordinateType) {
+            case OBSTACLE:
+                aStar.addObstacle(coordinate);
+                break;
+            case POINT:
+                aStar.addPoint(coordinate);
+                break;
+            case START:
+                aStar.addStart(coordinate);
+                break;
+            case GOAL:
+                aStar.addGoal(coordinate);
+                break;
+            case PENALTY: aStar.addPenalty(coordinate, penaltyValue);
+                break;
+            case WAYPOINT:
+                aStar.addWaypoint(coordinate);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
