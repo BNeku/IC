@@ -11,5 +11,6 @@ public interface AStarDelegate {
     void onAddPointError(); //Cuando el usuario ya ha añadido 2 puntos.
     void didAddAnObstacle();
     void didAddPenalty();
+    void didAddWaypoint();
     void didCloseNode();
 }

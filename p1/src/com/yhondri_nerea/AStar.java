@@ -17,6 +17,7 @@ public class AStar {
     private List<Coordinate> neighboursArray;
     private AStarDelegate delegate;
     private List<Coordinate> pathToGoal = new ArrayList<>();
+    private List<Coordinate> waypointList = new ArrayList<>();
 
     public AStar(AStarDelegate delegate, int mazeDimension) {
         this.delegate = delegate;
@@ -24,9 +25,39 @@ public class AStar {
     }
 
     public void run() {
+        List<Coordinate> localWaypoints = new ArrayList<>(waypointList);
+        localWaypoints.add(0, initCoordinate);
+        localWaypoints.add(goalCoordinate);
+
+        int index = 0;
+        Coordinate startCoordinate = localWaypoints.get(index);
+        Coordinate endCoordinate = localWaypoints.get(index+1);
+
+        while (index <= localWaypoints.size()-1) {
+            Node node = findPath(startCoordinate, endCoordinate);
+            if (node != null) {
+                addPath(node);
+                delegate.didFindPath(pathToGoal);
+            } else {
+                delegate.didNotFindAPath();
+                break;
+            }
+
+            if (!localWaypoints.isEmpty()) {
+                startCoordinate = endCoordinate;
+                index++;
+                if (index <= localWaypoints.size()-1) {
+                    endCoordinate = localWaypoints.get(index);
+                }
+            }
+
+        }
+    }
+
+    public Node findPath(Coordinate startCoordinate, Coordinate endCoordinate) {
         setupNeighboursArray();
 
-        Node initialNode = new Node(initCoordinate, distanceBetween(initCoordinate, goalCoordinate), 0.0);
+        Node initialNode = new Node(startCoordinate, distanceBetween(startCoordinate, startCoordinate), 0.0);
         openNodesPriorityQueue.add(initialNode);
 
         Node goalNode = null;
@@ -34,7 +65,7 @@ public class AStar {
             Node currentNode = openNodesPriorityQueue.poll();
             closedCoordinateList.add(currentNode.getCoordinate());
 
-            if (currentNode.getCoordinate().equals(goalCoordinate)) {
+            if (currentNode.getCoordinate().equals(endCoordinate)) {
                 goalNode = currentNode;
             } else {
                 for (int i = 0; i < 8; i++) {
@@ -47,6 +78,7 @@ public class AStar {
                     if (penalty == null) {
                         penalty = 0.0;
                     }
+
                     double distanceFromStartToNeighbour = distanceBetween(currentNode.getCoordinate(), neighbourCoordinate) + currentNode.getH() + penalty;
                     Node neighbourNode = getOpenNode(neighbourCoordinate);
 
@@ -55,7 +87,7 @@ public class AStar {
                         if (penalty == null) {
                             penalty = 0.0;
                         }
-                        double distanceToEnd = distanceBetween(neighbourCoordinate, goalCoordinate) + penalty;
+                        double distanceToEnd = distanceBetween(neighbourCoordinate, endCoordinate) + penalty;
                         Node newNeighbourNode = new Node(neighbourCoordinate, distanceToEnd, distanceFromStartToNeighbour);
                         newNeighbourNode.setParentNode(currentNode);
                         openNodesPriorityQueue.add(newNeighbourNode);
@@ -70,16 +102,18 @@ public class AStar {
             delegate.didCloseNode();
         }
 
-        if (goalNode == null) {
+        return goalNode;
+    }
+
+    private void addPath(Node node) {
+        if (node == null) {
             delegate.didNotFindAPath();
         } else {
-            Node currentNode = goalNode;
+            Node currentNode = node;
             while (currentNode != null) {
                 pathToGoal.add(0, currentNode.getCoordinate());
                 currentNode = currentNode.getParentNode();
             }
-
-            delegate.didFindPath(pathToGoal);
         }
     }
 
@@ -108,6 +142,12 @@ public class AStar {
     private boolean isObstacle(Coordinate coordinate) {
         synchronized (obstacleCoordinateList) {
             return obstacleCoordinateList.contains(coordinate);
+        }
+    }
+
+    private boolean isWaypoint(Coordinate coordinate) {
+        synchronized (waypointList) {
+            return waypointList.contains(coordinate);
         }
     }
 
@@ -221,7 +261,13 @@ public class AStar {
     }
 
     public void addWaypoint(Coordinate coordinate) {
-
+        CoordinateType coordinateType = getCoordinateType(coordinate);
+        if (coordinateType == CoordinateType.FREE) {
+            synchronized (penaltyMap) {
+                waypointList.add(coordinate);
+            }
+            delegate.didAddAnObstacle();
+        }
     }
 
     public CoordinateType getCoordinateType(Coordinate coordinate) {
@@ -229,13 +275,16 @@ public class AStar {
             return CoordinateType.INVALID;
         }
 
-        //Integer index = getPointIndexAt(coordinate);
         if (coordinate.equals(initCoordinate)) {
             return CoordinateType.START;
         }
 
         if (coordinate.equals(goalCoordinate)) {
             return CoordinateType.GOAL;
+        }
+
+        if (isWaypoint(coordinate)) {
+            return CoordinateType.WAYPOINT;
         }
 
         if (isObstacle(coordinate)) {
@@ -263,139 +312,5 @@ public class AStar {
         return CoordinateType.FREE;
     }
 
-    private Integer getPointIndexAt(Coordinate coordinate) {
-        synchronized (pointList) {
-            int index = pointList.indexOf(coordinate);
-            if(index >= 0)  {
-                return index;
-            } else {
-                return null;
-            }
-        }
-    }
-
     //endregion MVC
-
-    private void expandirNode(Node fatherNode, char[][] board) {
-//        Node newNode;
-//        double diagonalValue = Math.sqrt(2);
-//
-//        //Vertical arriba
-//        if (!(fatherNode.getCoordinate().getRow() + 1 > dim-1) && board[fatherNode.getCoordinate().getRow() + 1 ][fatherNode.getCoordinate().getColumn()] != 'x') {
-//            newNode = new Node(fatherNode.getCoordinate().getRow() + 1, fatherNode.getCoordinate().getColumn(), 1, goalCoordinate, fatherNode);
-//            if (openNodesPriorityQueue.contains(newNode)) {
-//                double g = fatherNode.getG() + 1;
-//                if(newNode.getG() >= g){
-//                    Node foundNode = findNodeInQueue(newNode);
-//                    foundNode.setG(newNode.getG());
-//                }
-//            } else {
-//                openNodesPriorityQueue.add(newNode);
-//            }
-//        }
-//
-//        //Vertical abajo
-//        if ((fatherNode.getCoordinate().getRow() - 1 > 0) && board[fatherNode.getCoordinate().getRow() - 1 ][fatherNode.getCoordinate().getColumn()] != 'x') {
-//            newNode = new Node(fatherNode.getCoordinate().getRow() - 1, fatherNode.getCoordinate().getColumn(), 1, goalCoordinate, fatherNode);
-//            if (openNodesPriorityQueue.contains(newNode)) {
-//                double g = fatherNode.getG() + 1;
-//                if(newNode.getG() >= g){
-//                    Node foundNode = findNodeInQueue(newNode);
-//                    foundNode.setG(newNode.getG());
-//                }
-//            } else {
-//                openNodesPriorityQueue.add(newNode);
-//            }
-//        }
-//
-//        try {
-//            //Horizontal derecha
-//            if (!(fatherNode.getCoordinate().getColumn() + 1 > dim - 1) && board[fatherNode.getCoordinate().getRow()][fatherNode.getCoordinate().getColumn() + 1] != 'x') {
-//                newNode = new Node(fatherNode.getCoordinate().getRow(), fatherNode.getCoordinate().getColumn() + 1, 1, goalCoordinate, fatherNode);
-//                if (openNodesPriorityQueue.contains(newNode)) {
-//                    double g = fatherNode.getG() + 1;
-//                    if (newNode.getG() >= g) {
-//                        Node foundNode = findNodeInQueue(newNode);
-//                        foundNode.setG(newNode.getG());
-//                    }
-//                } else {
-//                    openNodesPriorityQueue.add(newNode);
-//                }
-//            }
-//        } catch (Exception e) {
-//            System.out.println("Exception " + fatherNode.getCoordinate().getColumn() + " " + fatherNode.getCoordinate().getRow());
-//        }
-//
-//        //Horizontal izquierda
-//        if ((fatherNode.getCoordinate().getColumn() - 1 > 0) && board[fatherNode.getCoordinate().getRow()][fatherNode.getCoordinate().getColumn() - 1] != 'x') {
-//            newNode = new Node(fatherNode.getCoordinate().getRow(), fatherNode.getCoordinate().getColumn()-1, 1, goalCoordinate, fatherNode);
-//            if (openNodesPriorityQueue.contains(newNode)) {
-//                double g = fatherNode.getG() + 1;
-//                if(newNode.getG() >= g){
-//                    Node foundNode = findNodeInQueue(newNode);
-//                    foundNode.setG(newNode.getG());
-//                }
-//            } else {cytrdrº
-//                openNodesPriorityQueue.add(newNode);
-//            }
-//        }
-//
-//        //Diagonal arriba derecha
-//        if (!(fatherNode.getCoordinate().getColumn() + 1 > dim-1) && !(fatherNode.getCoordinate().getRow() + 1 > dim-1)  && board[fatherNode.getCoordinate().getRow() + 1 ][fatherNode.getCoordinate().getColumn() + 1] != 'x') {
-//            newNode = new Node(fatherNode.getCoordinate().getRow()+1, fatherNode.getCoordinate().getColumn()+1, diagonalValue, goalCoordinate, fatherNode);
-//            if (openNodesPriorityQueue.contains(newNode)) {
-//                double g = fatherNode.getG() + Math.sqrt(2);
-//                if(newNode.getG() >= g){
-//                    Node foundNode = findNodeInQueue(newNode);
-//                    foundNode.setG(newNode.getG());
-//                }
-//            } else {
-//                openNodesPriorityQueue.add(newNode);
-//            }
-//        }
-//
-//        //Diagonal arriba izquierda
-//        if (!(fatherNode.getCoordinate().getColumn() + 1 > dim-1) && (fatherNode.getCoordinate().getRow() - 1 > 0)  && board[fatherNode.getCoordinate().getRow() - 1 ][fatherNode.getCoordinate().getColumn()] != 'x') {
-//            newNode = new Node(fatherNode.getCoordinate().getRow()+1, fatherNode.getCoordinate().getColumn()-1, diagonalValue, goalCoordinate, fatherNode);
-//            if (openNodesPriorityQueue.contains(newNode)) {
-//                double g = fatherNode.getG() + Math.sqrt(2);
-//                if(newNode.getG() >= g){
-//                    Node foundNode = findNodeInQueue(newNode);
-//                    foundNode.setG(newNode.getG());
-//                }
-//            } else {
-//                openNodesPriorityQueue.add(newNode);
-//            }
-//        }
-//
-//        //Diagonal abajo derecha
-//        if ((fatherNode.getCoordinate().getColumn() - 1 > 0) && !(fatherNode.getCoordinate().getRow() + 1 > dim-1) && board[fatherNode.getCoordinate().getRow() + 1 ][fatherNode.getCoordinate().getColumn() - 1] != 'x') {
-//            newNode = new Node(fatherNode.getCoordinate().getRow()-1, fatherNode.getCoordinate().getColumn()+1, diagonalValue, goalCoordinate, fatherNode);
-//            if (openNodesPriorityQueue.contains(newNode)) {
-//                double g = fatherNode.getG() + Math.sqrt(2);
-//                if(newNode.getG() >= g){
-//                    Node foundNode = findNodeInQueue(newNode);
-//                    foundNode.setG(newNode.getG());
-//                }
-//            } else {
-//                openNodesPriorityQueue.add(newNode);
-//            }
-//        }
-//
-//        //Diagonal abajo izquierda
-//        if ((fatherNode.getCoordinate().getColumn() - 1 > 0) && (fatherNode.getCoordinate().getRow() - 1 > 0)  && board[fatherNode.getCoordinate().getRow() - 1 ][fatherNode.getCoordinate().getColumn() - 1] != 'x') {
-//            newNode = new Node(fatherNode.getCoordinate().getRow()-1, fatherNode.getCoordinate().getColumn()-1, diagonalValue, goalCoordinate, fatherNode);
-//            if (openNodesPriorityQueue.contains(newNode)) {
-//                double g = fatherNode.getG() + Math.sqrt(2);
-//                if(newNode.getG() >= g){
-//                    Node foundNode = findNodeInQueue(newNode);
-//                    foundNode.setG(newNode.getG());
-//                }
-//            } else {
-//                openNodesPriorityQueue.add(newNode);
-//            }
-//        }
-    }
-
-
 }

@@ -113,7 +113,7 @@ public class App implements Board.Delegate, AStarDelegate {
                 aStar.addObstacle(coordinate);
                 break;
             case POINT:
-                aStar.addPoint(coordinate);
+                //aStar.addPoint(coordinate);
                 break;
             case START:
                 aStar.addStart(coordinate);
@@ -182,22 +182,17 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public void didAddAnObstacle() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                boardView.reloadData();
-            }
-        });
+        SwingUtilities.invokeLater(() -> boardView.reloadData());
     }
 
     @Override
     public void didAddPenalty() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                boardView.reloadData();
-            }
-        });
+        SwingUtilities.invokeLater(() -> boardView.reloadData());
+    }
+
+    @Override
+    public void didAddWaypoint() {
+        SwingUtilities.invokeLater(() -> boardView.reloadData());
     }
 
     @Override
