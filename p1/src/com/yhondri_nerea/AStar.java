@@ -70,7 +70,9 @@ public class AStar {
             delegate.didCloseNode();
         }
 
-        if (goalNode != null) {
+        if (goalNode == null) {
+            delegate.didNotFindAPath();
+        } else {
             Node currentNode = goalNode;
             while (currentNode != null) {
                 pathToGoal.add(0, currentNode.getCoordinate());

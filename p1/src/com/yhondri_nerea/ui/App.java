@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import static javax.swing.JOptionPane.showMessageDialog;
+
 public class App implements Board.Delegate, AStarDelegate {
     private JPanel panelMain;
     private JPanel boardContainerPanel;
@@ -160,7 +162,7 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public void didNotFindAPath() {
-
+        showMessageDialog(null, "No se ha encontrado camino.");
     }
 
     @Override
