@@ -24,6 +24,7 @@ public class App implements Board.Delegate, AStarDelegate {
     private JButton barroButton;
     private JButton metaButton;
     private JButton castilloButton;
+    private JSpinner boardSizeSpinner;
     private AStar aStar;
     private Board boardView;
     private double penaltyValue = 10;
@@ -49,6 +50,9 @@ public class App implements Board.Delegate, AStarDelegate {
         boardView = new Board(this);
         boardContainerPanel.setLayout(new CardLayout());
         boardContainerPanel.add(boardView, SwingConstants.CENTER);
+
+        SpinnerNumberModel populationSpinnerDataModel = new SpinnerNumberModel(5, 5, 1000, 1);
+        boardSizeSpinner.setModel(populationSpinnerDataModel);
 
         setupListeners();
         setupIcons();
@@ -122,12 +126,14 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public int getNumberOfRows() {
-        return 15;
+        int populationSize = (int) boardSizeSpinner.getValue();
+        return populationSize;
     }
 
     @Override
     public int getNumberOfColums() {
-        return 15;
+        int populationSize = (int) boardSizeSpinner.getValue();
+        return populationSize;
     }
 
     @Override
@@ -225,18 +231,7 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public void didCloseNode() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                boardView.reloadData();
-            }
-        });
-
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        SwingUtilities.invokeLater(() -> boardView.reloadData());
     }
 
     //endregion
