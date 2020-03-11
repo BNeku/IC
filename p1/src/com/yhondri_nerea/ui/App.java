@@ -32,11 +32,11 @@ public class App implements Board.Delegate, AStarDelegate {
     private boolean finished = false;
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("App");
+        JFrame frame = new JFrame("Algoritmo Estrella");
         frame.setContentPane(new App().panelMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(1080, 800));
-        frame.setMinimumSize(new Dimension(1080, 800));
+        frame.setPreferredSize(new Dimension(600, 600));
+        frame.setMinimumSize(new Dimension(600, 600));
         frame.pack();
         frame.setVisible(true);
     }
