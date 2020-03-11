@@ -4,6 +4,8 @@ import com.yhondri_nerea.AStar;
 import com.yhondri_nerea.AStarDelegate;
 import com.yhondri_nerea.entities.Coordinate;
 import com.yhondri_nerea.entities.CoordinateType;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,8 +34,8 @@ public class App implements Board.Delegate, AStarDelegate {
         JFrame frame = new JFrame("App");
         frame.setContentPane(new App().panelMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(600, 600));
-        frame.setMinimumSize(new Dimension(600, 600));
+        frame.setPreferredSize(new Dimension(1080, 800));
+        frame.setMinimumSize(new Dimension(1080, 800));
         frame.pack();
         frame.setVisible(true);
     }
@@ -49,6 +51,7 @@ public class App implements Board.Delegate, AStarDelegate {
         boardContainerPanel.add(boardView, SwingConstants.CENTER);
 
         setupListeners();
+        setupIcons();
         resetGame();
     }
 
@@ -82,7 +85,32 @@ public class App implements Board.Delegate, AStarDelegate {
         castilloButton.addActionListener(e -> {
             selectedCoordinateType = CoordinateType.WAYPOINT;
         });
+    }
 
+    private void setupIcons() {
+        try {
+            Image img = ImageIO.read(getClass().getResource("../resources/Barro.png"));
+            barroButton.setIcon(new ImageIcon(img));
+            barroButton.setText("");
+
+            img = ImageIO.read(getClass().getResource("../resources/Castillo.png"));
+            castilloButton.setIcon(new ImageIcon(img));
+            castilloButton.setText("");
+
+            img = ImageIO.read(getClass().getResource("../resources/Inicio.png"));
+            inicioButton.setIcon(new ImageIcon(img));
+            inicioButton.setText("");
+
+            img = ImageIO.read(getClass().getResource("../resources/Meta.png"));
+            metaButton.setIcon(new ImageIcon(img));
+            metaButton.setText("");
+
+            img = ImageIO.read(getClass().getResource("../resources/Pared.png"));
+            paredButton.setIcon(new ImageIcon(img));
+            paredButton.setText("");
+        } catch (Exception ex) {
+            System.out.println("Exception " +ex);
+        }
     }
 
     public void resetGame() {
@@ -94,12 +122,12 @@ public class App implements Board.Delegate, AStarDelegate {
 
     @Override
     public int getNumberOfRows() {
-        return 5;
+        return 15;
     }
 
     @Override
     public int getNumberOfColums() {
-        return 5;
+        return 15;
     }
 
     @Override
