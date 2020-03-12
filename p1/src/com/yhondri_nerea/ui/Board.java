@@ -1,5 +1,6 @@
 package com.yhondri_nerea.ui;
 
+import com.yhondri_nerea.ImagesHolder;
 import com.yhondri_nerea.entities.Coordinate;
 import com.yhondri_nerea.entities.CoordinateType;
 
@@ -12,6 +13,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
+import java.io.IOException;
 
 public class Board extends JComponent implements MouseMotionListener, MouseListener {
 
@@ -20,15 +22,15 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
     private int leftOffset;
     private int topOffset;
     private Delegate delegate;
-    private BufferedImage barroImage;
-    private BufferedImage castilloImage;
-    private BufferedImage exploradoImage;
-    private BufferedImage inicioImage;
-    private BufferedImage metaImage;
-    private BufferedImage paredImage;
-    private BufferedImage pointImage;
-    private BufferedImage stepsImage;
-
+//    private BufferedImage barroImage;
+//    private BufferedImage castilloImage;
+//    private BufferedImage exploradoImage;
+//    private BufferedImage inicioImage;
+//    private BufferedImage metaImage;
+//    private BufferedImage paredImage;
+//    private BufferedImage pointImage;
+//    private BufferedImage stepsImage;
+    private final ImagesHolder imagesHolder = new ImagesHolder();
     public Delegate getDelegate() {
         return delegate;
     }
@@ -46,7 +48,7 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
         CoordinateType getCoordinateType(Coordinate coordinate);
     }
 
-    public Board(Delegate delegate) {
+    public Board(Delegate delegate) throws IOException {
         this.delegate = delegate;
         setBackground(Color.gray);
         setOpaque(true);
@@ -56,28 +58,28 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
     }
 
     private void setupImages() {
-        try {
-            String path;
-
-            path = getClass().getResource("../resources/Barro.png").getPath();
-            barroImage = ImageIO.read(new File(path));
-            path = getClass().getResource("../resources/Castillo.png").getPath();
-            castilloImage = ImageIO.read(new File(path));
-            path = getClass().getResource("../resources/Explorado.png").getPath();
-            exploradoImage = ImageIO.read(new File(path));
-            path = getClass().getResource("../resources/Inicio.png").getPath();
-            inicioImage = ImageIO.read(new File(path));
-            path = getClass().getResource("../resources/Meta.png").getPath();
-            metaImage = ImageIO.read(new File(path));
-            path = getClass().getResource("../resources/Pared.png").getPath();
-            paredImage = ImageIO.read(new File(path));
-            path = getClass().getResource("../resources/Point.png").getPath();
-            pointImage = ImageIO.read(new File(path));
-            path = getClass().getResource("../resources/Steps.png").getPath();
-            stepsImage = ImageIO.read(new File(path));
-        } catch (Exception ex) {
-            System.out.println("Exception " +ex);
-        }
+//        try {
+//            String path;
+//
+//            path = getClass().getResource("../resources/barro.png").getPath();
+//            barroImage = ImageIO.read(new File(path));
+//            path = getClass().getResource("../resources/Castillo.png").getPath();
+//            castilloImage = ImageIO.read(new File(path));
+//            path = getClass().getResource("../resources/Explorado.png").getPath();
+//            exploradoImage = ImageIO.read(new File(path));
+//            path = getClass().getResource("../resources/Inicio.png").getPath();
+//            inicioImage = ImageIO.read(new File(path));
+//            path = getClass().getResource("../resources/Meta.png").getPath();
+//            metaImage = ImageIO.read(new File(path));
+//            path = getClass().getResource("../resources/Pared.png").getPath();
+//            paredImage = ImageIO.read(new File(path));
+//            path = getClass().getResource("../resources/Point.png").getPath();
+//            pointImage = ImageIO.read(new File(path));
+//            path = getClass().getResource("../resources/Steps.png").getPath();
+//            stepsImage = ImageIO.read(new File(path));
+//        } catch (Exception ex) {
+//            System.out.println("Exception " +ex);
+//        }
     }
 
     public void reloadData() {
@@ -204,45 +206,46 @@ public class Board extends JComponent implements MouseMotionListener, MouseListe
             case OBSTACLE:
                 graphics.setColor(Color.WHITE);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
-                graphics.drawImage(paredImage, imageX, imageY, imageSize, imageSize, null);
+                graphics.drawImage(imagesHolder.paredImage.getImage(), imageX, imageY, imageSize, imageSize, null);
                 break;
             case WAYPOINT:
                 graphics.setColor(Color.WHITE);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
-                graphics.drawImage(castilloImage, imageX, imageY, imageSize, imageSize, null);
+                graphics.drawImage(imagesHolder.castilloImage.getImage(), imageX, imageY, imageSize, imageSize, null);
                 break;
             case OPEN:
                 graphics.setColor(Color.green);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
                 break;
             case CLOSED:
-                graphics.setColor(Color.magenta);
+                graphics.setColor(Color.white);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
+                graphics.drawImage(imagesHolder.exploradoImage.getImage(), imageX, imageY, imageSize, imageSize, null);
                 break;
             case PENALTY:
                 graphics.setColor(Color.WHITE);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
-                graphics.drawImage(barroImage, imageX, imageY, imageSize, imageSize, null);
+                graphics.drawImage(imagesHolder.barroImage.getImage(), imageX, imageY, imageSize, imageSize, null);
                 break;
             case PATH:
                 graphics.setColor(Color.WHITE);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
-                graphics.drawImage(stepsImage, imageX, imageY, imageSize, imageSize, null);
+                graphics.drawImage(imagesHolder.stepsImage.getImage(), imageX, imageY, imageSize, imageSize, null);
                 break;
             case POINT:
                 graphics.setColor(Color.WHITE);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
-                graphics.drawImage(pointImage, imageX, imageY, imageSize, imageSize, null);
+                graphics.drawImage(imagesHolder.pointImage.getImage(), imageX, imageY, imageSize, imageSize, null);
                 break;
             case START:
                 graphics.setColor(Color.WHITE);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
-                graphics.drawImage(inicioImage, imageX, imageY, imageSize, imageSize, null);
+                graphics.drawImage(imagesHolder.inicioImage.getImage(), imageX, imageY, imageSize, imageSize, null);
                 break;
             case GOAL:
                 graphics.setColor(Color.WHITE);
                 graphics.fillRect(x+1, y+1, cellSize-2, cellSize-2);
-                graphics.drawImage(metaImage, imageX, imageY, imageSize, imageSize, null);
+                graphics.drawImage(imagesHolder.metaImage.getImage(), imageX, imageY, imageSize, imageSize, null);
                 break;
         }
 

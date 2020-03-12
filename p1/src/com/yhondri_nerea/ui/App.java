@@ -2,6 +2,7 @@ package com.yhondri_nerea.ui;
 
 import com.yhondri_nerea.AStar;
 import com.yhondri_nerea.AStarDelegate;
+import com.yhondri_nerea.ImagesHolder;
 import com.yhondri_nerea.entities.Coordinate;
 import com.yhondri_nerea.entities.CoordinateType;
 
@@ -10,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -47,7 +50,11 @@ public class App implements Board.Delegate, AStarDelegate {
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
         gridBagConstraints.weightx = 1;
-        boardView = new Board(this);
+        try {
+            boardView = new Board(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         boardContainerPanel.setLayout(new CardLayout());
         boardContainerPanel.add(boardView, SwingConstants.CENTER);
 
@@ -93,24 +100,20 @@ public class App implements Board.Delegate, AStarDelegate {
 
     private void setupIcons() {
         try {
-            Image img = ImageIO.read(getClass().getResource("../resources/Barro.png"));
-            barroButton.setIcon(new ImageIcon(img));
+            ImagesHolder imagesHolder = new ImagesHolder();
+            barroButton.setIcon(imagesHolder.barroImage);
             barroButton.setText("");
 
-            img = ImageIO.read(getClass().getResource("../resources/Castillo.png"));
-            castilloButton.setIcon(new ImageIcon(img));
+            castilloButton.setIcon(imagesHolder.castilloImage);
             castilloButton.setText("");
 
-            img = ImageIO.read(getClass().getResource("../resources/Inicio.png"));
-            inicioButton.setIcon(new ImageIcon(img));
+            inicioButton.setIcon(imagesHolder.inicioImage);
             inicioButton.setText("");
 
-            img = ImageIO.read(getClass().getResource("../resources/Meta.png"));
-            metaButton.setIcon(new ImageIcon(img));
+            metaButton.setIcon(imagesHolder.metaImage);
             metaButton.setText("");
 
-            img = ImageIO.read(getClass().getResource("../resources/Pared.png"));
-            paredButton.setIcon(new ImageIcon(img));
+            paredButton.setIcon(imagesHolder.paredImage);
             paredButton.setText("");
         } catch (Exception ex) {
             System.out.println("Exception " +ex);
