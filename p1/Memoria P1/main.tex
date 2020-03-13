@@ -19,6 +19,7 @@
 
 \newpage
 \tableofcontents
+\listoffigures
 \newpage
 
 \section{Detalles de la implementación}
@@ -60,27 +61,62 @@ Al igual que con las casillas con obstáculos, cada vez que se quiera expandir a
 Estas casillas son casillas por las que hay que pasar obligatoriamente en nuestro camino en el orden que el usuario las coloca, \textit{waypoints}. Estas casillas están nombradas como \textbf{Castillo}.\\
 Para esta ampliación, hemos utilizado una lista, \textit{waypointlist}, en donde guardamos las coordenadas de los puntos donde hay que pasar obligatorioamente. Introducimos las coordenadas en el orden que el usuario las coloca, y se sacan en el mismo orden. Lo que hacemos es hacer que el primer waypoint sea nuestra meta provisional, de forma que el árbol se expande hasta encontrar un camino. Una vez llegados a esta meta, pasa a ser el inicio y el siguiente waypoint la meta. Se sigue de esta forma hasta que no nos quedan waypoints, y nuestra meta es la que se colocó inicialmente como tal.
 \subsection{Otros elementos de interés}
+Para la redimensión del tablero, hemos añadido un campo \textit{TamañoTablero}. Este coge el valor del campo de la barra para escribir bajo el nombre \textbf{Tamaño del tablero}, y cambia el tablero a este valor.\\ Este número puede o bien, escribirse, o bien subir o bajar con las flechas.\\
+Por defecto, el tablero es de 5x5.
 
 \section{Código ejecutable}
-Se adjunta en el archivo tipo zip con nombre \textbf{Código} zip, y un ejecutable tipo jar con nombre \textbf{Ejecutable}.
+Se adjunta en el archivo tipo zip con nombre \textbf{Código} zip, y un ejecutable tipo jar con nombre \textbf{p1}.
 \subsection{Simulación ejemplo enunciado}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{EjemploEnunciado.JPG}
+    \caption{Ejemplo enunciado práctica}
+\end{figure}
 \subsection{Simulación sin obstáculos}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{EjemploSinObstáculos.JPG}
+    \caption{Ejemplo sin obtáculos}
+\end{figure}
 \subsection{Simulación con penalización}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{SimulaciónConPenalizacion.JPG}
+    \caption{Ejemplo con penalización}
+\end{figure}
 \subsection{Simulación con waypoints}
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{SimulacionConWaypoints.JPG}
+    \caption{Ejemplo con waypoints}
+\end{figure}
+\subsection{Simulación sin camino}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{SimulaciónSinCamino.JPG}
+    \caption{Ejemplo sin camino}
+\end{figure}
+\subsection{Simulación de cambio del tamaño del tablero}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{SimulacionTablero.JPG}
+    \caption{Ejemplo cambio del tamaño del tablero}
+\end{figure}
+\newpage
 \section{Manual de usuario}
-Para empezar con la aplicación, clickeamos dos veces sobre el archivo ejecutable.\\
+Para empezar con la aplicación, clickeamos dos veces sobre el archivo ejecutable con nombre \textbf{p1}.\\
+Podemos elegir el tamaño del tablero escribiendo el número de filas en el apartado\textit{ Tamaño del tablero}. Para que se confirme el número, debemos pulsar después el número de reiniciar.\\
 A la hora de marcar las casillas, seleccionaremos en el menú izquierdo, bajo los botones de iniciar y reiniciar, el tipo de casilla a dibujar.\\
 Una vez seleccionado el tipo de casilla que queremos, clickeamos las casillas que queremos que sean de dicho tipo. Los tipos de casilla son los siguientes:\\
 \begin{itemize}
-    \item \textbf{Inicio}: marca donde va a comenzar.
-    \item \textbf{Meta}: marca el final.
-    \item \textbf{Pared}: casillas por las que no se pueden pasar.
-    \item \textbf{Barro}: casillas que tienen penalización al pasar por ellas.
-    \item \textbf{Castillo}: casillas por las que es obligatorio pasar antes de llegar a la meta.
+    \item \textbf{Inicio}: marca donde va a comenzar. (Icono de persona)
+    \item \textbf{Meta}: marca el final. (Icono finish)
+    \item \textbf{Pared}: casillas por las que no se pueden pasar. (Icono valla)
+    \item \textbf{Barro}: casillas que tienen penalización al pasar por ellas.(Icono piedras/barro)
+    \item \textbf{Castillo}: casillas por las que es obligatorio pasar antes de llegar a la meta. (Icono castillo)
 \end{itemize}
 Es obligatorio poner un inicio y una meta.\\
 Una vez satisfechos con nuestro tablero, clickeamos en el botón \textit{Empezar}.\\
 Si queremos limpiar el mapa, clickeamos sobre el botón \textit{Reiniciar}.\\
-Las casillas exploradas aparecerán de color rosa magenta.
+Las casillas exploradas aparecerán marcadas con pétalos, y el camino resultante con huellas.
 \end{document}
