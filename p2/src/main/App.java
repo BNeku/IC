@@ -21,8 +21,10 @@ public class App {
     private JLabel gameAttributesLabel;
     private JButton executeButton;
     private JTextArea resultTextArea;
+    private JComboBox defaultAttributeComboBox;
     private List<List<String>> dataList;
     private List<String> attributesList;
+    private String[] attributesArray;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("ID3");
@@ -54,6 +56,17 @@ public class App {
                 System.out.print(value + ", ");
             }
         }
+
+        setupComboBox();
+    }
+
+    private void setupComboBox() {
+        attributesArray = new String[attributesList.size()];
+        for (int i = 0; i < attributesList.size(); i++) {
+            attributesArray[i] = attributesList.get(i);
+        }
+        DefaultComboBoxModel selectionModel = new DefaultComboBoxModel(attributesArray);
+        defaultAttributeComboBox.setModel(selectionModel);
     }
 
     private void onChooseGame() {
@@ -75,7 +88,10 @@ public class App {
     }
 
     private void execuetID3() {
-        ID3 id3 = new ID3(attributesList, dataList, "Jugar");
+        int index = defaultAttributeComboBox.getSelectedIndex();
+        String targetAttribute = attributesArray[index];
+
+        ID3 id3 = new ID3(attributesList, dataList, targetAttribute);
         Node rootNode = id3.executeID3();
         String result = getResult(rootNode, 0);
         resultTextArea.setText(result);
