@@ -7,22 +7,22 @@ import java.util.stream.Collectors;
 
 public class ID3 {
     private List<String> attributes;
-    private List<String[]> data;
+    private List<List<String>> data;
     private String targetAttribute;
 
-    public Node executteID3() {
+    public ID3(List<String> attributes, List<List<String>> data, String targetAttribute) {
+        this.attributes = attributes;
+        this.data = data;
+        this.targetAttribute = targetAttribute;
+    }
+
+    public Node executeID3() {
         List<String> noTargetAttributes = attributes.stream().filter(attribute -> attribute != targetAttribute ).collect(Collectors.toList());
-        List<List<String>> dataList = new ArrayList<>();
-        for (String[] arrayData : data) {
-            dataList.add(Arrays.asList(arrayData));
-        }
-        return id3(dataList, noTargetAttributes);
+        return id3(data, noTargetAttributes);
     }
 
     private Node id3(List<List<String>> data, List<String> restoAttributos) {
-        List dataList = new ArrayList();
-        dataList.add(Arrays.asList(Arrays.asList(data)));
-        Map<String, Integer> targetValues = getTargetValuesFromData(dataList, targetAttribute);
+        Map<String, Integer> targetValues = getTargetValuesFromData(data, targetAttribute);
 
         if (targetValues.size() == 1) {
             Map.Entry<String, Integer> entry = targetValues.entrySet().iterator().next();
@@ -79,7 +79,7 @@ public class ID3 {
                 nodes.put(value, newNode);
             }
         }
-        return null;
+        return new Node(attributesMaxValue, nodes);
     }
 
     private List<String> getRestoAttributesFromData(List<String> data, String noTargetValue) {
@@ -98,10 +98,10 @@ public class ID3 {
             result.put(attribute, new HashSet<>());
         }
 
-        for (String[] dataArray : data) {
-            for (int i = 0; i < dataArray.length; i++) {
+        for (List<String> dataArray : data) {
+            for (int i = 0; i < dataArray.size(); i++) {
                 String attribute = attributes.get(i);
-                String value = dataArray[i];
+                String value = dataArray.get(i);
                 result.get(attribute).add(value);
             }
         }
@@ -118,7 +118,7 @@ public class ID3 {
                 partitionResultData.get(value).add(attributeArray);
             } else {
                 List newList = new ArrayList();
-                newList.add(Arrays.asList(attributeArray));
+                newList.add(attributeArray);
                 partitionResultData.put(value, newList);
             }
         }
@@ -129,8 +129,8 @@ public class ID3 {
     private Map<String, Integer> getTargetValuesFromData(List<List<String>> data, String attribute) {
         Map<String, Integer> values = new HashMap<>();
         int attributeIndex = attributes.indexOf(attribute);
-        for (List<String> attributes : data) {
-            String selectedAttribute = attributes.get(attributeIndex);
+        for (List<String> dataAttributes : data) {
+            String selectedAttribute = dataAttributes.get(attributeIndex);
             if (values.containsKey(selectedAttribute)) {
                 Integer newValue = values.get(selectedAttribute);
                 newValue += 1;
@@ -139,7 +139,7 @@ public class ID3 {
                 values.put(selectedAttribute, 1);
             }
         }
-        return  values;
+        return values;
     }
 
     private String getMoreRepeatedValueFromData(Map<String, Integer> data) {

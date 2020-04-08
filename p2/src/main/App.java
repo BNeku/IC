@@ -1,9 +1,15 @@
 package main;
 
+import algorithm.ID3;
 import helper.Reader;
+import model.Node;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class App {
@@ -12,8 +18,9 @@ public class App {
     private JPanel panelMain;
     private JButton gameAttributesFileButton;
     private JLabel gameAttributesLabel;
-    private List<String[]> dataList;
-    private String[] attributesList;
+    private JButton executeButton;
+    private List<List<String>> dataList;
+    private List<String> attributesList;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("ID3");
@@ -26,19 +33,37 @@ public class App {
     }
 
     public App() {
-        gameAttributesButton.addActionListener(e -> onChooseGameAttributes());
-        gameAttributesFileButton.addActionListener(e -> onChooseGame());
+        gameAttributesButton.addActionListener(e -> onChooseGame());
+        gameAttributesFileButton.addActionListener(e -> onChooseGameAttributes());
+        executeButton.addActionListener(e -> execuetID3());
     }
 
     private void onChooseGameAttributes() {
         JFileChooser jFileChooser = new JFileChooser();
         int option = jFileChooser.showOpenDialog(panelMain);
+        attributesList = new ArrayList<>();
 
         if (option == JFileChooser.APPROVE_OPTION) {
             File file = jFileChooser.getSelectedFile();
-            dataList = Reader.readFile(file);
+            String[] attributesArray = Reader.readFile(file).get(0);
+            gameAttributesLabel.setText(file.getName());
+            for (String value : attributesArray) {
+                attributesList.add(value);
+                System.out.print(value + ", ");
+            }
+        }
+    }
+
+    private void onChooseGame() {
+        JFileChooser jFileChooser = new JFileChooser();
+        int option = jFileChooser.showOpenDialog(panelMain);
+        dataList = new ArrayList<>();
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File file = jFileChooser.getSelectedFile();
+            List<String[]> readList = Reader.readFile(file);
             attributesFileLabel.setText(file.getName());
-            for (String[] array : dataList) {
+            for (String[] array : readList) {
+                dataList.add(Arrays.asList(array));
                 for (String value : array) {
                     System.out.print(value + " ");
                 }
@@ -47,17 +72,9 @@ public class App {
         }
     }
 
-    private void onChooseGame() {
-        JFileChooser jFileChooser = new JFileChooser();
-        int option = jFileChooser.showOpenDialog(panelMain);
-
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File file = jFileChooser.getSelectedFile();
-            attributesList = Reader.readFile(file).get(0);
-            gameAttributesLabel.setText(file.getName());
-            for (String value : attributesList) {
-                System.out.print(value + ", ");
-            }
-        }
+    private void execuetID3() {
+        ID3 id3 = new ID3(attributesList, dataList, "Jugar");
+        Node rootNode = id3.executeID3();
+        System.out.println("Espero que haya funcionado");
     }
 }
