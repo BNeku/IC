@@ -10,4 +10,12 @@ public class Node {
         this.value = value;
         this.nodes = nodes;
     }
+
+    public String getValue() {
+        return value;
+    }
+
+    public Map<String, Node> getNodes() {
+        return nodes;
+    }
 }
