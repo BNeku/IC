@@ -21,6 +21,13 @@ public class ID3 {
         return id3(data, noTargetAttributes);
     }
 
+    /**
+     * Implementamos el algoritmo siguiendo el pseudocódigo de la página 21 - Tema 04 Aprendizaje II.
+     *
+     * @param data los atributos que definen las reglas
+     * @param restoAttributos atributos restantes a filtrar
+     * @return Nodo raíz del subárbol creado.
+     */
     private Node id3(List<List<String>> data, List<String> restoAttributos) {
         Map<String, Integer> targetValues = getTargetValuesFromData(data, targetAttribute);
 
@@ -30,6 +37,7 @@ public class ID3 {
             return new Node(key, null);
         }
 
+        //Si la lista está vacía, regresamos.
         if (targetValues.isEmpty()) {
             String key = getMoreRepeatedValueFromData(targetValues);
             return new Node(key, null);
@@ -41,17 +49,29 @@ public class ID3 {
         String attributesMaxValue = null;
         Map<String, List<List<String>>> partitionDataMaxValue = null;
 
+        /**
+         * La ganancia e información se basa en el decremento de la entropía cuando el conjunto de datos se divide en los valores de un atributo.
+         * Se calcula la entropía del total
+         * Se divide el conjunto de ddatos en función de los diferenes atributos.
+         * Se calcula la entropía de cada rama y se suman proporcionalmente las ramas para alcular la entropía del total.
+         * Se resta el resultado de la entropía original.
+         * El resultado es la ganancia de la información.
+         * El atributo con mayor ganancia es seleccionado como nodo de decisión.
+         * Fuente: https://es.slideshare.net/FernandoCaparrini/arboles-decision-id3
+         */
         for (String value : restoAttributos) {
-            Map<String, List<List<String>>> partitionData = getPartitionFromData(data, value);
+            Map<String, List<List<String>>> partitionData = getPartitionFromData(data, value); // Se divide el conjunto.
             double averageEntropy = 0;
 
             for (Map.Entry<String, List<List<String>>> entry : partitionData.entrySet()) {
                 int partitionN = entry.getValue().size();
                 Map<String, Integer> partitionTargetValues = getTargetValuesFromData(entry.getValue(), value);
                 double partitionEntropy = getEntropy(partitionN, partitionTargetValues);
-                averageEntropy += partitionN / size * partitionEntropy;
+                averageEntropy += partitionN / size * partitionEntropy; // Calculamos entropía de cada rama y la sumamos proporcionalmente.
             }
 
+
+            //Entropía total
             double result = entropy - averageEntropy;
             if (maxValue == null || result > maxValue) {
                 maxValue = result;
@@ -109,6 +129,13 @@ public class ID3 {
         return result;
     }
 
+    /**
+     * Calcula el número de repeticiones que tiene cada uno de los posibles atributos del atributo dado.
+     * Por ejemplo: targetAttribute = Temperatura --> caluroso(4), templado(6), frío(4).
+     * @param data Los datos a partir del cual se van a extraer los atributos.
+     * @param targetAttribute El atributo objetivo.
+     * @return Los atributos del target y el valor de sus repeticiones.
+     */
     private Map<String, List<List<String>>> getPartitionFromData(List<List<String>> data, String targetAttribute) {
         Map<String, List<List<String>>> partitionResultData = new HashMap<>();
         int attributeIndex = attributes.indexOf(targetAttribute);
@@ -126,6 +153,12 @@ public class ID3 {
         return partitionResultData;
     }
 
+    /**
+     * Obtiene los attributos a partir del atributo dado.
+     * @param data Los datos a partir del cual se va a obtener la partición.
+     * @param attribute El atributo a partir del cual se va a crear el subconjunto.
+     * @return devuelve los atributos seleccionados.
+     */
     private Map<String, Integer> getTargetValuesFromData(List<List<String>> data, String attribute) {
         Map<String, Integer> values = new HashMap<>();
         int attributeIndex = attributes.indexOf(attribute);
@@ -142,6 +175,11 @@ public class ID3 {
         return values;
     }
 
+    /**
+     * Obtenemos el valor que más se repite.
+     * @param data Datos desde donde se extraerá el valor que más se repite.
+     * @return Devuelve el valor que más se repite.
+     */
     private String getMoreRepeatedValueFromData(Map<String, Integer> data) {
         String moreRepeatedValue = null;
         Integer max = 0;
@@ -154,12 +192,18 @@ public class ID3 {
         return moreRepeatedValue;
     }
 
+    /**
+     * Calccula la entropía a partir de unos datos datos.
+     * @param n Número total de datos.
+     * @param data Datos a partir de los cuales se calculará la entropía.
+     * @return Devuelve la entropía de los datos.
+     */
     private double getEntropy(int n, Map<String, Integer> data) {
         double entropy = 0;
         for (Map.Entry<String, Integer> entry : data.entrySet()) {
-            double pX = entry.getValue();
+            double pX = entry.getValue()/n;
             double log = Math.log(pX);
-            double log2 = log/Math.log(2);
+            double log2 = log/Math.log(2.0);
             entropy += -pX * log2;
         }
         return entropy;

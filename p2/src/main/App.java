@@ -95,9 +95,16 @@ public class App {
         Node rootNode = id3.executeID3();
         String result = getResult(rootNode, 0);
         resultTextArea.setText(result);
-        System.out.println("Espero que haya funcionado");
     }
 
+    /**
+     * Leyenda:
+     * -> Nodo.
+     * = Hoja (attributos del nodo seleccionado).
+     * @param node Nodo raíz del subárbol.
+     * @param level Nivel.
+     * @return Devuelve el string con el árbol creado. 
+     */
     private String getResult(Node node, int level) {
         String leftSpaces = " ";
         for (int i = 0; i < (level * 4); i++) {
