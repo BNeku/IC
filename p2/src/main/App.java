@@ -103,7 +103,7 @@ public class App {
      * = Hoja (attributos del nodo seleccionado).
      * @param node Nodo raíz del subárbol.
      * @param level Nivel.
-     * @return Devuelve el string con el árbol creado. 
+     * @return Devuelve el string con el árbol creado.
      */
     private String getResult(Node node, int level) {
         String leftSpaces = " ";
@@ -115,7 +115,7 @@ public class App {
 
         if (node.getNodes() != null) {
             for (Map.Entry<String, Node> entry : node.getNodes().entrySet()) {
-                result += String.format("%s   = %s\n", leftSpaces, entry.getKey());
+                result += String.format("%s   =%s\n", leftSpaces, entry.getKey());
                 result += getResult(entry.getValue(), level + 1);
             }
         }
