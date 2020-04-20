@@ -21,7 +21,6 @@ public class App {
     private JLabel gameAttributesLabel;
     private JButton executeButton;
     private JTextArea resultTextArea;
-    private JComboBox defaultAttributeComboBox;
     private List<List<String>> dataList;
     private List<String> attributesList;
     private String[] attributesArray;
@@ -66,7 +65,7 @@ public class App {
             attributesArray[i] = attributesList.get(i);
         }
         DefaultComboBoxModel selectionModel = new DefaultComboBoxModel(attributesArray);
-        defaultAttributeComboBox.setModel(selectionModel);
+//        defaultAttributeComboBox.setModel(selectionModel);
     }
 
     private void onChooseGame() {
@@ -88,8 +87,8 @@ public class App {
     }
 
     private void execuetID3() {
-        int index = defaultAttributeComboBox.getSelectedIndex();
-        String targetAttribute = attributesArray[index];
+//        int index = defaultAttributeComboBox.getSelectedIndex();
+        String targetAttribute = attributesArray[0];
 
         ID3 id3 = new ID3(attributesList, dataList, targetAttribute);
         Node rootNode = id3.executeID3();
@@ -103,7 +102,9 @@ public class App {
      * = Hoja (attributos del nodo seleccionado).
      * @param node Nodo raíz del subárbol.
      * @param level Nivel.
-     * @return Devuelve el string con el árbol creado.
+     * @return Devuelve el string con el árbol creado.+
+     *
+     * Cambiarlo para poner el atributo elegido y
      */
     private String getResult(Node node, int level) {
         String leftSpaces = " ";

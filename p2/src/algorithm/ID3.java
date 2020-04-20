@@ -1,7 +1,6 @@
 package algorithm;
 
 import model.Node;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,19 +16,18 @@ public class ID3 {
     }
 
     public Node executeID3() {
-        List<String> noTargetAttributes = attributes.stream().filter(attribute -> attribute != targetAttribute ).collect(Collectors.toList());
-        return id3(data, noTargetAttributes);
+        List<String> restosAtributos = attributes.stream().filter(attribute -> attribute != targetAttribute ).collect(Collectors.toList());
+        return id3(data, restosAtributos);
     }
 
     /**
      * Implementamos el algoritmo siguiendo el pseudocódigo de la página 21 - Tema 04 Aprendizaje II.
-     *
-     * @param data los atributos que definen las reglas
+     * @param data los ejemplos que definen las reglas
      * @param restoAttributos atributos restantes a filtrar
      * @return Nodo raíz del subárbol creado.
      */
     private Node id3(List<List<String>> data, List<String> restoAttributos) {
-        Map<String, Integer> targetValues = getTargetValuesFromData(data, targetAttribute);
+        Map<String, Integer> targetValues = getTargetValuesFromData(data, targetAttribute); //Pasar primer atributo por defecto
 
         if (targetValues.size() == 1) {
             Map.Entry<String, Integer> entry = targetValues.entrySet().iterator().next();
@@ -44,50 +42,52 @@ public class ID3 {
         }
 
         int size = data.size();
-        double entropy = getEntropy(size, targetValues);
+        //Calculamos la entropía porque necesitamos iniciar el siguiente subarbol con la raíz del mejor. (página 21 - punto 4).
+        Double entropy = getEntropy(size, targetValues);
         Double maxValue = null;
         String attributesMaxValue = null;
         Map<String, List<List<String>>> partitionDataMaxValue = null;
 
-        /**
-         * La ganancia e información se basa en el decremento de la entropía cuando el conjunto de datos se divide en los valores de un atributo.
-         * Se calcula la entropía del total
-         * Se divide el conjunto de ddatos en función de los diferenes atributos.
-         * Se calcula la entropía de cada rama y se suman proporcionalmente las ramas para alcular la entropía del total.
-         * Se resta el resultado de la entropía original.
-         * El resultado es la ganancia de la información.
-         * El atributo con mayor ganancia es seleccionado como nodo de decisión.
-         * Fuente: https://es.slideshare.net/FernandoCaparrini/arboles-decision-id3
-         */
+        //Calculamos el mejor elemento.
         for (String value : restoAttributos) {
             Map<String, List<List<String>>> partitionData = getPartitionFromData(data, value); // Se divide el conjunto.
-            double averageEntropy = 0;
+            Double merito = 0.0;
 
             for (Map.Entry<String, List<List<String>>> entry : partitionData.entrySet()) {
                 int partitionN = entry.getValue().size();
                 Map<String, Integer> partitionTargetValues = getTargetValuesFromData(entry.getValue(), value);
-                double partitionEntropy = getEntropy(partitionN, partitionTargetValues);
-                averageEntropy += partitionN / size * partitionEntropy; // Calculamos entropía de cada rama y la sumamos proporcionalmente.
+                Double partitionEntropy = getEntropy(partitionN, partitionTargetValues);
+                merito += (partitionN/size) * partitionEntropy; // Calculamos el mérito de cada rama
             }
 
-
             //Entropía total
-            double result = entropy - averageEntropy;
-            if (maxValue == null || result > maxValue) {
-                maxValue = result;
+            Double infoGain = entropy - merito;
+            if (maxValue == null || infoGain > maxValue) {
+                maxValue = infoGain;
                 attributesMaxValue = value;
                 partitionDataMaxValue = partitionData;
             }
         }
 
+        //Condición de parada, hemos llegado a una hoja (nodo sin hijos), hora de regresar.
         if (maxValue == null || attributesMaxValue == null || partitionDataMaxValue == null) {
             String moreRepeatedValue = getMoreRepeatedValueFromData(targetValues);
             return new Node(moreRepeatedValue, null);
         }
 
+        /**
+         * Preparamos subárbol cuya raíz es el mejor atributo.
+         */
         Map<String, Node> nodes = new HashMap<>();
-        List<String> newRestoAttributos = getRestoAttributesFromData(restoAttributos, attributesMaxValue);
+        String finalAttributesMaxValue = attributesMaxValue;
+
+        //Los nuevos atributos a explorar.
+        List<String> newRestoAttributos = restoAttributos.stream().filter(attribute -> attribute != finalAttributesMaxValue).collect(Collectors.toList());
+
+        //Obtenemos los atributos del mejor. (Por ejemplo, de temperatura obtenemos, caluroso, frío, templado).
         Set<String> noRepeatedValues = getNoRepeatedValues().get(attributesMaxValue);
+
+        //Para cada valor vi de mejor, íncluimos en ejemplos-restantes los elementos de la lista-ejemplos que tengan valor vi del atributo mejor.
         for (String value : noRepeatedValues) {
             if (!partitionDataMaxValue.containsKey(value)) {
                 String moreRepeatedValue = getMoreRepeatedValueFromData(targetValues);
@@ -95,23 +95,17 @@ public class ID3 {
                 nodes.put(value, newNode);
             } else {
                List<List<String>> partition = partitionDataMaxValue.get(value);
-                Node newNode = id3(partition, newRestoAttributos);
+                Node newNode = id3(partition, newRestoAttributos); //Devolvemos ID3(ejemplos restantes, atributos-restantes).
                 nodes.put(value, newNode);
             }
         }
         return new Node(attributesMaxValue, nodes);
     }
 
-    private List<String> getRestoAttributesFromData(List<String> data, String noTargetValue) {
-        List<String> result = new ArrayList<>();
-        for (String value : data) {
-            if (value != noTargetValue) {
-                result.add(value);
-            }
-        }
-        return result;
-    }
-
+    /**
+     * Obtiene la lista de de los atributos (Viento, TiempoExterior, Jugar, Humedad, Temperatura).
+     * @return Devuelve la lista de atributos.
+     */
     private Map<String, Set<String>> getNoRepeatedValues() {
         Map<String, Set<String>> result = new HashMap<>();
         for (String attribute: attributes) {
@@ -154,7 +148,8 @@ public class ID3 {
     }
 
     /**
-     * Obtiene los attributos a partir del atributo dado.
+     * Obtiene los ejemplos a partir del atributo dado. Data filas de la matriz de ejemplos (ojo solo filas restantes en el atributo pasado por parámetro).
+     * Ejemplo: Temperatura -> Caluroso(4).
      * @param data Los datos a partir del cual se va a obtener la partición.
      * @param attribute El atributo a partir del cual se va a crear el subconjunto.
      * @return devuelve los atributos seleccionados.
@@ -172,6 +167,7 @@ public class ID3 {
                 values.put(selectedAttribute, 1);
             }
         }
+
         return values;
     }
 
@@ -184,7 +180,7 @@ public class ID3 {
         String moreRepeatedValue = null;
         Integer max = 0;
         for (Map.Entry<String, Integer> entry : data.entrySet()) {
-            if (entry.getValue() >= max) {
+            if (entry.getValue() > max) {
                 max = entry.getValue();
                 moreRepeatedValue = entry.getKey();
             }
@@ -193,19 +189,27 @@ public class ID3 {
     }
 
     /**
-     * Calccula la entropía a partir de unos datos datos.
+     * Calcula la entropía aplicando el algoritmo página 19, Entropía.
      * @param n Número total de datos.
      * @param data Datos a partir de los cuales se calculará la entropía.
      * @return Devuelve la entropía de los datos.
      */
-    private double getEntropy(int n, Map<String, Integer> data) {
-        double entropy = 0;
+    private Double getEntropy(int n, Map<String, Integer> data) {
+        Double entropy = 0.0;
         for (Map.Entry<String, Integer> entry : data.entrySet()) {
-            double pX = entry.getValue()/n;
-            double log = Math.log(pX);
-            double log2 = log/Math.log(2.0);
+            Double pX = new Double(entry.getValue()) / n;
+            Double log2 = getBase2Log(pX);
             entropy += -pX * log2;
         }
         return entropy;
+    }
+
+    /**
+     * Calcula el logaritmo en base 2 de un valor.
+     * @param x valor cuyo algoritmo se va a calcular.
+     * @return el logagritmo en base 2 de x.
+     */
+    public static Double getBase2Log(Double x) {
+        return (Math.log(x) / Math.log(2) + 1e-10);
     }
 }
