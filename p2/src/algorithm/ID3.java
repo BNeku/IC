@@ -42,13 +42,11 @@ public class ID3 {
         }
 
         int size = data.size();
-        //Calculamos la entropía porque necesitamos iniciar el siguiente subarbol con la raíz del mejor. (página 21 - punto 4).
-        Double entropy = getEntropy(size, targetValues);
-        Double maxValue = null;
+        Double minMerito = null;
         String attributesMaxValue = null;
         Map<String, List<List<String>>> partitionDataMaxValue = null;
 
-        //Calculamos el mejor elemento.
+        //Calculamos el mejor elemento, es decir, aquel con menor mérito.
         for (String value : restoAttributos) {
             Map<String, List<List<String>>> partitionData = getPartitionFromData(data, value); // Se divide el conjunto.
             Double merito = 0.0;
@@ -60,17 +58,15 @@ public class ID3 {
                 merito += (partitionN/size) * partitionEntropy; // Calculamos el mérito de cada rama
             }
 
-            //Entropía total
-            Double infoGain = entropy - merito;
-            if (maxValue == null || infoGain > maxValue) {
-                maxValue = infoGain;
+            if (minMerito == null || minMerito > merito) {
+                minMerito = merito;
                 attributesMaxValue = value;
                 partitionDataMaxValue = partitionData;
             }
         }
 
         //Condición de parada, hemos llegado a una hoja (nodo sin hijos), hora de regresar.
-        if (maxValue == null || attributesMaxValue == null || partitionDataMaxValue == null) {
+        if (minMerito == null || attributesMaxValue == null || partitionDataMaxValue == null) {
             String moreRepeatedValue = getMoreRepeatedValueFromData(targetValues);
             return new Node(moreRepeatedValue, null);
         }
