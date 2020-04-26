@@ -88,7 +88,7 @@ public class App {
 
     private void execuetID3() {
 //        int index = defaultAttributeComboBox.getSelectedIndex();
-        String targetAttribute = attributesArray[0];
+        String targetAttribute = attributesArray[4];
 
         ID3 id3 = new ID3(attributesList, dataList, targetAttribute);
         Node rootNode = id3.executeID3();
