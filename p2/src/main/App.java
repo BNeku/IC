@@ -52,7 +52,7 @@ public class App {
             gameAttributesLabel.setText(file.getName());
             for (String value : attributesArray) {
                 attributesList.add(value);
-                System.out.print(value + ", ");
+//                System.out.print(value + ", ");
             }
         }
 
@@ -78,10 +78,10 @@ public class App {
             attributesFileLabel.setText(file.getName());
             for (String[] array : readList) {
                 dataList.add(Arrays.asList(array));
-                for (String value : array) {
-                    System.out.print(value + " ");
-                }
-                System.out.println();
+//                for (String value : array) {
+//                    System.out.print(value + " ");
+//                }
+//                System.out.println();
             }
         }
     }
