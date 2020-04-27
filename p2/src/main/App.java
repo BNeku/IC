@@ -3,11 +3,9 @@ package main;
 import algorithm.ID3;
 import helper.Reader;
 import model.Node;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,7 +86,7 @@ public class App {
 
     private void execuetID3() {
 //        int index = defaultAttributeComboBox.getSelectedIndex();
-        String targetAttribute = attributesArray[4];
+        String targetAttribute = attributesArray[0];
 
         ID3 id3 = new ID3(attributesList, dataList, targetAttribute);
         Node rootNode = id3.executeID3();
@@ -107,6 +105,10 @@ public class App {
      * Cambiarlo para poner el atributo elegido y
      */
     private String getResult(Node node, int level) {
+        if (node == null) {
+            return "";
+        }
+
         String leftSpaces = " ";
         for (int i = 0; i < (level * 4); i++) {
             leftSpaces += " ";
