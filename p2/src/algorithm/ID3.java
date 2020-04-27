@@ -91,15 +91,18 @@ public class ID3 {
 
         //Calculamos el mejor elemento, es decir, aquel con menor mérito.
         for (String value : restoAttributos) {
+            if (value.equals("Jugar")) {
+                continue;
+            }
             Map<String, List<List<String>>> partitionData = getPartitionFromData(mData, value); // Se divide el conjunto.
             Double merito = 0.0;
 
             for (Map.Entry<String, List<List<String>>> entry : partitionData.entrySet()) {
                 int partitionN = entry.getValue().size(); //Porque estamos incluyendo también el valor
                 Map<String, Integer> partitionTargetValues = getTargetValuesFromData(entry.getValue(), value);
-                Double partitionEntropy = getEntropy(partitionN, partitionTargetValues);
+                Double infor = getInfor(entry.getValue());
 //                System.out.println("(partitionN/size) " + (partitionN/size) + " HipartitionEntropy " +partitionEntropy);
-                merito += (partitionN/size) * partitionEntropy; // Calculamos el mérito de cada rama
+                merito += (partitionN/size) * infor; // Calculamos el mérito de cada rama
             }
 
             if (minMerito == null || minMerito > merito) {
@@ -112,12 +115,12 @@ public class ID3 {
         return bestAttribute;
     }
 
-        /**
-         * Implementamos el algoritmo siguiendo el pseudocódigo de la página 21 - Tema 04 Aprendizaje II.
-         * @param data los ejemplos que definen las reglas
-         * @param restoAttributos atributos restantes a filtrar
-         * @return Nodo raíz del subárbol creado.
-         */
+    /**
+     * Implementamos el algoritmo siguiendo el pseudocódigo de la página 21 - Tema 04 Aprendizaje II.
+     * @param data los ejemplos que definen las reglas
+     * @param restoAttributos atributos restantes a filtrar
+     * @return Nodo raíz del subárbol creado.
+     */
 //    private Node id3(List<List<String>> data, List<String> restoAttributos, String targetAttribute, Map<String, Integer> targetValues) {
 ////        Map<String, Integer> targetValues = getTargetValuesFromData(data, targetAttribute); //Pasar primer atributo por defecto
 //
@@ -297,11 +300,27 @@ public class ID3 {
         return entropy;
     }
 
-    /**
-     * Calcula el logaritmo en base 2 de un valor.
-     * @param x valor cuyo algoritmo se va a calcular.
-     * @return el logagritmo en base 2 de x.
-     */
+    private Double getInfor(List<List<String>> entry) {
+        double pX = 0;
+        double nX = 0;
+        int N = entry.size();
+        for (List<String> mList : entry) {
+            if (mList.contains("si")) {
+                pX++;
+            } else {
+                nX++;
+            }
+        }
+        double p = -pX/N*getBase2Log(pX/N);
+        double n = -nX/N*getBase2Log(nX/N);
+       return p+n;
+    }
+
+        /**
+         * Calcula el logaritmo en base 2 de un valor.
+         * @param x valor cuyo algoritmo se va a calcular.
+         * @return el logagritmo en base 2 de x.
+         */
     public static Double getBase2Log(Double x) {
         return x == 0 ? 0 : (Math.log(x) / LOG2);
     }
