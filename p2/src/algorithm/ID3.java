@@ -7,17 +7,14 @@ import java.util.stream.Collectors;
 public class ID3 {
     private List<String> attributes;
     private List<List<String>> data;
-    private String targetAttribute;
     private static final double LOG2 = Math.log(2.0);
 
-    public ID3(List<String> attributes, List<List<String>> data, String targetAttribute) {
+    public ID3(List<String> attributes, List<List<String>> data) {
         this.attributes = attributes;
         this.data = data;
-        this.targetAttribute = targetAttribute;
     }
 
     public Node executeID3() {
-//        List<String> restosAtributos = attributes.stream().filter(attribute -> attribute != targetAttribute ).collect(Collectors.toList());
          return id3(data, attributes);
     }
 
@@ -65,19 +62,9 @@ public class ID3 {
         Map<String, Node> nodes = new HashMap<>();
 
         for (String value : noRepeatedValues) {
-
-            int i = 0;
-            i++;
-
-//            if (!partitionDataMaxValue.containsKey(value)) {
-//                String moreRepeatedValue = getMoreRepeatedValueFromData(targetValues);
-//                Node newNode = new Node(moreRepeatedValue, null);
-//                nodes.put(value, newNode);
-//            } else {
                List<List<String>> partition = partitionDataMaxValue.get(value);
                 Node newNode = id3(partition, newRestoAttributos); //Devolvemos ID3(ejemplos restantes, atributos-restantes).
                 nodes.put(value, newNode);
-//            }
         }
 
         return new Node(bestAttribute, nodes);
@@ -87,7 +74,6 @@ public class ID3 {
         Double size = new Double(mData.size());
         Double minMerito = null;
         String bestAttribute = null;
-        Map<String, List<List<String>>> partitionDataMaxValue = null;
 
         //Calculamos el mejor elemento, es decir, aquel con menor mérito.
         for (String value : restoAttributos) {
@@ -99,101 +85,18 @@ public class ID3 {
 
             for (Map.Entry<String, List<List<String>>> entry : partitionData.entrySet()) {
                 int partitionN = entry.getValue().size(); //Porque estamos incluyendo también el valor
-                Map<String, Integer> partitionTargetValues = getTargetValuesFromData(entry.getValue(), value);
                 Double infor = getInfor(entry.getValue());
-//                System.out.println("(partitionN/size) " + (partitionN/size) + " HipartitionEntropy " +partitionEntropy);
                 merito += (partitionN/size) * infor; // Calculamos el mérito de cada rama
             }
 
             if (minMerito == null || minMerito > merito) {
                 minMerito = merito;
                 bestAttribute = value;
-                partitionDataMaxValue = partitionData;
             }
         }
 
         return bestAttribute;
     }
-
-    /**
-     * Implementamos el algoritmo siguiendo el pseudocódigo de la página 21 - Tema 04 Aprendizaje II.
-     * @param data los ejemplos que definen las reglas
-     * @param restoAttributos atributos restantes a filtrar
-     * @return Nodo raíz del subárbol creado.
-     */
-//    private Node id3(List<List<String>> data, List<String> restoAttributos, String targetAttribute, Map<String, Integer> targetValues) {
-////        Map<String, Integer> targetValues = getTargetValuesFromData(data, targetAttribute); //Pasar primer atributo por defecto
-//
-//        if (targetValues.size() == 1) {
-//            Map.Entry<String, Integer> entry = targetValues.entrySet().iterator().next();
-//            String key = entry.getKey();
-//            return new Node(key, null);
-//        }
-//
-//        //Si la lista está vacía, regresamos.
-//        if (targetValues.isEmpty()) {
-//            String key = getMoreRepeatedValueFromData(targetValues);
-//            return new Node(key, null);
-//        }
-//
-//        Double size = new Double(data.size());
-//        Double minMerito = null;
-//        String attributesMaxValue = null;
-//        Map<String, List<List<String>>> partitionDataMaxValue = null;
-//
-//        //Calculamos el mejor elemento, es decir, aquel con menor mérito.
-//        for (String value : restoAttributos) {
-//            Map<String, List<List<String>>> partitionData = getPartitionFromData(data, value); // Se divide el conjunto.
-//            Double merito = 0.0;
-//
-//            for (Map.Entry<String, List<List<String>>> entry : partitionData.entrySet()) {
-//                int partitionN = entry.getValue().size();
-//                Map<String, Integer> partitionTargetValues = getTargetValuesFromData(entry.getValue(), value);
-//                Double partitionEntropy = getEntropy(partitionN, partitionTargetValues);
-////                System.out.println("(partitionN/size) " + (partitionN/size) + " HipartitionEntropy " +partitionEntropy);
-//                merito += (partitionN/size) * partitionEntropy; // Calculamos el mérito de cada rama
-//            }
-//
-//
-//            if (minMerito == null || minMerito > merito) {
-//                minMerito = merito;
-//                attributesMaxValue = value;
-//                partitionDataMaxValue = partitionData;
-//            }
-//        }
-//
-//        //Condición de parada, hemos llegado a una hoja (nodo sin hijos), hora de regresar.
-//        if (minMerito == null || attributesMaxValue == null || partitionDataMaxValue == null && !targetAttribute.isEmpty()) {
-//            String moreRepeatedValue = getMoreRepeatedValueFromData(targetValues);
-//            return new Node(moreRepeatedValue, null);
-//        }
-//
-//        /**
-//         * Preparamos subárbol cuya raíz es el mejor atributo.
-//         */
-//        Map<String, Node> nodes = new HashMap<>();
-//        String finalAttributesMaxValue = attributesMaxValue;
-//
-//        //Los nuevos atributos a explorar.
-//        List<String> newRestoAttributos = restoAttributos.stream().filter(attribute -> attribute != finalAttributesMaxValue).collect(Collectors.toList());
-//
-//        //Obtenemos los atributos del mejor. (Por ejemplo, de temperatura obtenemos, caluroso, frío, templado).
-//        Set<String> noRepeatedValues = getNoRepeatedValues().get(attributesMaxValue);
-//
-//        //Para cada valor vi de mejor, íncluimos en ejemplos-restantes los elementos de la lista-ejemplos que tengan valor vi del atributo mejor.
-//        for (String value : noRepeatedValues) {
-//            if (!partitionDataMaxValue.containsKey(value)) {
-//                String moreRepeatedValue = getMoreRepeatedValueFromData(targetValues);
-//                Node newNode = new Node(moreRepeatedValue, null);
-//                nodes.put(value, newNode);
-//            } else {
-//               List<List<String>> partition = partitionDataMaxValue.get(value);
-//                Node newNode = id3(partition, newRestoAttributos, finalAttributesMaxValue); //Devolvemos ID3(ejemplos restantes, atributos-restantes).
-//                nodes.put(value, newNode);
-//            }
-//        }
-//        return new Node(attributesMaxValue, nodes);
-//    }
 
     /**
      * Obtiene la lista de de los atributos (Viento, TiempoExterior, Jugar, Humedad, Temperatura).
@@ -265,39 +168,6 @@ public class ID3 {
         }
 
         return values;
-    }
-
-    /**
-     * Obtenemos el valor que más se repite.
-     * @param data Datos desde donde se extraerá el valor que más se repite.
-     * @return Devuelve el valor que más se repite.
-     */
-    private String getMoreRepeatedValueFromData(Map<String, Integer> data) {
-        String moreRepeatedValue = null;
-        Integer max = 0;
-        for (Map.Entry<String, Integer> entry : data.entrySet()) {
-            if (entry.getValue() > max) {
-                max = entry.getValue();
-                moreRepeatedValue = entry.getKey();
-            }
-        }
-        return moreRepeatedValue;
-    }
-
-    /**
-     * Calcula la entropía aplicando el algoritmo página 19, Entropía.
-     * @param n Número total de datos.
-     * @param data Datos a partir de los cuales se calculará la entropía.
-     * @return Devuelve la entropía de los datos.
-     */
-    private Double getEntropy(int n, Map<String, Integer> data) {
-        Double entropy = 0.0;
-        for (Map.Entry<String, Integer> entry : data.entrySet()) {
-            Double pX = new Double(entry.getValue()) / n;
-            Double log2 = getBase2Log(pX);
-            entropy += -pX * log2;
-        }
-        return entropy;
     }
 
     private Double getInfor(List<List<String>> entry) {

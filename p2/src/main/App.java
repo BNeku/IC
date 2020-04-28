@@ -50,7 +50,6 @@ public class App {
             gameAttributesLabel.setText(file.getName());
             for (String value : attributesArray) {
                 attributesList.add(value);
-//                System.out.print(value + ", ");
             }
         }
 
@@ -62,8 +61,6 @@ public class App {
         for (int i = 0; i < attributesList.size(); i++) {
             attributesArray[i] = attributesList.get(i);
         }
-        DefaultComboBoxModel selectionModel = new DefaultComboBoxModel(attributesArray);
-//        defaultAttributeComboBox.setModel(selectionModel);
     }
 
     private void onChooseGame() {
@@ -76,19 +73,12 @@ public class App {
             attributesFileLabel.setText(file.getName());
             for (String[] array : readList) {
                 dataList.add(Arrays.asList(array));
-//                for (String value : array) {
-//                    System.out.print(value + " ");
-//                }
-//                System.out.println();
             }
         }
     }
 
     private void execuetID3() {
-//        int index = defaultAttributeComboBox.getSelectedIndex();
-        String targetAttribute = attributesArray[0];
-
-        ID3 id3 = new ID3(attributesList, dataList, targetAttribute);
+        ID3 id3 = new ID3(attributesList, dataList);
         Node rootNode = id3.executeID3();
         String result = getResult(rootNode, 0);
         resultTextArea.setText(result);
