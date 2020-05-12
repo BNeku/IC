@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class App {
     private JPanel panelMain;
@@ -12,5 +13,15 @@ public class App {
         frame.setMinimumSize(new Dimension(800, 600));
         frame.pack();
         frame.setVisible(true);
+
+        loadData();
+    }
+
+    private static void loadData() {
+        try {
+            new DataSource().loadData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
