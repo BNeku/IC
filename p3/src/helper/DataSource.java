@@ -19,12 +19,14 @@ public class DataSource {
         return dataMatrix;
     }
 
-    public void loadData() throws IOException {
+    public List<List<String>> loadData() throws IOException {
         String filePath = ClassLoader.getSystemResource("Iris2Clases.txt").getPath();
         List<List<String>> data = readFile(filePath);
         loadClassesData(data);
         loadCentrosData(data);
         String stop = "";
+
+        return data;
     }
 
     private List<List<String>> readFile(String filePath) throws IOException {
