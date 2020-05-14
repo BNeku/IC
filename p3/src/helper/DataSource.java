@@ -14,10 +14,7 @@ public class DataSource {
     public List<Matrix> getClassesData() {
         return classesData;
     }
-
-    public Matrix getDataMatrix() {
-        return dataMatrix;
-    }
+    public Matrix getCentrosMatrix(){return centrosMatrix;}
 
     public void loadData() throws IOException {
         String filePath = ClassLoader.getSystemResource("Iris2Clases.txt").getPath();
@@ -77,4 +74,5 @@ public class DataSource {
         centrosMatrix.set(1, 2, 4.6);
         centrosMatrix.set(1, 3, 0.7);
     }
+
 }

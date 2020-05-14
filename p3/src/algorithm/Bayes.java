@@ -17,6 +17,7 @@ public class Bayes {
 
     /*Clase para calcular las medias. */
     private void calculateAverages(){
+
         averageClass1.plusArray(data.get(0).getData());
         averageClass1=averageClass1.divide(data.get(0).getM());
 
@@ -36,11 +37,11 @@ public class Bayes {
         double distanceClass1 = class1.distanceBayes();
         double distanceClass2 = class2.distanceBayes();
 
-
+        System.out.print("Mediante el algoritmo de Bayes se ha calculado que ");
         if(distanceClass1<distanceClass2){
-            System.out.print("La muestra pertenece a la clase 1 "+data.get(0).getName()+"\n");
+            System.out.print("la muestra pertenece a la clase 1 "+data.get(0).getName()+"\n");
         }else{
-            System.out.print("La muestra pertenece a la clase 2 "+data.get(1).getName()+"\n");
+            System.out.print("la muestra pertenece a la clase 2 "+data.get(1).getName()+"\n");
         }
 
     }

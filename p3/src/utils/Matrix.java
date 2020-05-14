@@ -101,6 +101,7 @@ final public class Matrix {
         return C;
     }
 
+
     // does A = B exactly?
     public boolean eq(Matrix B) {
         Matrix A = this;
