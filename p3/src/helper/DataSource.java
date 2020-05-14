@@ -19,14 +19,12 @@ public class DataSource {
         return dataMatrix;
     }
 
-    public List<List<String>> loadData() throws IOException {
+    public void loadData() throws IOException {
         String filePath = ClassLoader.getSystemResource("Iris2Clases.txt").getPath();
         List<List<String>> data = readFile(filePath);
         loadClassesData(data);
         loadCentrosData(data);
         String stop = "";
-
-        return data;
     }
 
     private List<List<String>> readFile(String filePath) throws IOException {
@@ -53,6 +51,7 @@ public class DataSource {
                 double value = Double.parseDouble(row.get(j));
                 dataMatrix.set(i, j, value);
                 classesData.get(0).set(i, j, dataMatrix.get(i, j));
+                classesData.get(0).setName(row.get(4));
             }
         }
 
@@ -62,6 +61,7 @@ public class DataSource {
                 double value = Double.parseDouble(row.get(j));
                 dataMatrix.set(i, j, value);
                 classesData.get(1).set(i-50, j, dataMatrix.get(i, j));
+                classesData.get(1).setName(row.get(4));
             }
         }
     }

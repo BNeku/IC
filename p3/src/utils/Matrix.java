@@ -12,11 +12,13 @@ final public class Matrix {
     private final int M;             // number of rows
     private final int N;             // number of columns
     private final double[][] data;   // M-by-N array
+    private String name;
 
     // create M-by-N matrix of 0's
     public Matrix(int M, int N) {
         this.M = M;
         this.N = N;
+        this.name="none";
         data = new double[M][N];
     }
 
@@ -79,6 +81,14 @@ final public class Matrix {
         return C;
     }
 
+    public void plusArray(double B[][]){
+        Matrix A = this;
+
+        for (int i = 0; i < B.length; i++)
+            for (int j = 0; j < N; j++)
+                A.data[0][j] +=  B[i][j];
+
+    }
 
     // return C = A - B
     public Matrix minus(Matrix B) {
@@ -111,6 +121,32 @@ final public class Matrix {
                 for (int k = 0; k < A.N; k++)
                     C.data[i][j] += (A.data[i][k] * B.data[k][j]);
         return C;
+    }
+
+    //return C = A/x
+    public Matrix divide(int x){
+        Matrix A = this;
+        Matrix C = new Matrix(A.M,A.N);
+
+        for(int i=0;i<A.M;i++){
+            for(int j=0; j<A.N;j++){
+                C.data[i][j]=A.data[i][j]/x;
+            }
+        }
+        return C;
+    }
+
+    public double distanceBayes(){
+        Matrix A=this;
+        double distance=0;
+
+        for(int i=0;i<M;i++){
+            for(int j=0; j<N;j++){
+                distance+=A.data[i][j]*A.data[i][j];
+            }
+        }
+
+        return distance;
     }
 
 
@@ -178,7 +214,26 @@ final public class Matrix {
         data[row][column] = value;
     }
 
+    public int getM() {
+        return M;
+    }
+    public int getN(){
+        return N;
+    }
+
+    public double[][] getData() {
+        return data;
+    }
+
     public Double get(int row, int column) {
         return data[row][column];
+    }
+
+    public void setName(String name){
+        this.name=name;
+    }
+
+    public String getName() {
+        return name;
     }
 }

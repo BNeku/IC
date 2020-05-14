@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
+import utils.Matrix;
 
 import algorithm.Bayes;
 
@@ -25,12 +26,18 @@ public class App {
 
     private static void loadData() {
         try {
-            List<List<String>> data = new DataSource().loadData();
+            DataSource d = new DataSource();
+            d.loadData();
+            List<Matrix> data = d.getClassesData();
+            Bayes b = new Bayes(data);
             //ejemplos de los archivos
             //AQUI ES DONDE TE DIGO QUE DEBERÍA LEER POR PANTALLA O DESDE UN ARCHIVO LOS DATOS
-            //new Bayes(data).whichClassBelongTo(5.1,3.5,1.4,0.2);
-            //new Bayes(data).whichClassBelongTo(6.9,3.1,4.9,1.5);
-            //new Bayes(data).whichClassBelongTo(5.0,3.4,1.5,0.2);
+            double[][] prueba = new double[1][4];
+            //prueba[0][0]=5.0;prueba[0][1]=3.5;prueba[0][2]=1.4;prueba[0][3]=0.2;
+            //prueba[0][0]=6.9;prueba[0][1]=3.1;prueba[0][2]=4.9;prueba[0][3]=1.5;
+            prueba[0][0]=5.0;prueba[0][1]=3.4;prueba[0][2]=1.5;prueba[0][3]=0.2;
+            Matrix M = new Matrix(prueba);
+            b.whichClassBelongTo(M);
 
 
         } catch (IOException e) {
