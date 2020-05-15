@@ -17,14 +17,14 @@ public class DataSource {
     public Matrix getCentrosMatrix(){return centrosMatrix;}
 
     public void loadData() throws IOException {
-        String filePath = ClassLoader.getSystemResource("Iris2Clases.txt").getPath();
-        List<List<String>> data = readFile(filePath);
+        List<List<String>> data = readFile("Iris2Clases.txt");
         loadClassesData(data);
         loadCentrosData(data);
         String stop = "";
     }
 
-    private List<List<String>> readFile(String filePath) throws IOException {
+    public List<List<String>> readFile(String fileName) throws IOException {
+        String filePath = ClassLoader.getSystemResource(fileName).getPath();
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String currentLine;
         List<List<String>> data = new ArrayList<>();

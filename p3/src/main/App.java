@@ -13,6 +13,11 @@ import algorithm.Lloyd;
 
 public class App {
     private JPanel panelMain;
+    private JComboBox testFileComboBox;
+    private JComboBox algorithmComboBox;
+    private JButton executeAlgorithmButton;
+    private JTextArea resultTextArea;
+    private final String[] testsCaseFiles = new String[]{"TestIris01.txt", "TestIris02.txt", "TestIris03.txt"};
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("App");
@@ -22,20 +27,62 @@ public class App {
         frame.setMinimumSize(new Dimension(800, 600));
         frame.pack();
         frame.setVisible(true);
+    }
 
-        loadData();
+    public App() {
+        setupListeners();
+    }
 
+    private void setupListeners() {
+        DefaultComboBoxModel testsCaseFilesModel = new DefaultComboBoxModel(testsCaseFiles);
+        testFileComboBox.setModel(testsCaseFilesModel);
+
+        String[] alogrithms = new String[]{"Bayes", "Borroso", "Lloyd"};
+        DefaultComboBoxModel alogrithmsModel = new DefaultComboBoxModel(alogrithms);
+        algorithmComboBox.setModel(alogrithmsModel);
+
+        executeAlgorithmButton.addActionListener(e -> {
+            executeAlgorithm();
+        });
+    }
+
+    private void executeAlgorithm() {
+        String testCaseFile = testsCaseFiles[testFileComboBox.getSelectedIndex()];
+        DataSource dataSource = new DataSource();
         try {
-            executeBorroso();
+            dataSource.loadData();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        switch (algorithmComboBox.getSelectedIndex()) {
+            case 0:
+                break;
+            case 1:
+                executeBorroso(testCaseFile);
+                break;
+            case 2:
+                break;
+            default:
+                break;
+        }
     }
 
-    private static void executeBorroso() throws IOException {
+    private void executeBorroso(String testCaseFile) {
         DataSource dataSource = new DataSource();
-        dataSource.loadData();
-        new Borroso(dataSource.getDataMatrix(), dataSource.getCentrosMatrix(), 2);
+        try {
+            dataSource.loadData();
+            Borroso borroso =  new Borroso(dataSource.getDataMatrix(), dataSource.getCentrosMatrix(), 2);
+            List<String> fileValues =  dataSource.readFile(testCaseFile).get(0);
+            double[] values = new double[fileValues.size()-1];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = Double.parseDouble(fileValues.get(i));
+            }
+            String result = borroso.getClassForValues(values);
+            resultTextArea.setText(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void loadData() {

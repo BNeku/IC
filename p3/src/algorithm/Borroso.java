@@ -13,6 +13,7 @@ public class Borroso {
     private int b = 2;
     //Tolerancia
     private double epsilon = 0.01;
+    private String[] algorithmClasses;
 
     public Borroso(Matrix dataMatrix, Matrix initialCentrosMatrix, int numberOfClasses) {
         this.dataMatrix = dataMatrix;
@@ -20,7 +21,7 @@ public class Borroso {
         this.numberOfClasses = numberOfClasses;
         this.membershipGradesMatrix = new Matrix(numberOfClasses, dataMatrix.getNumbeOfRows());
         this.distances = new Matrix(numberOfClasses, dataMatrix.getNumbeOfRows());
-
+        this.algorithmClasses = new String[]{"Iris-setosa", "Iris-versicolor"};
         boolean shouldIterate;
         do {
             shouldIterate = performIteration();
@@ -90,12 +91,22 @@ public class Borroso {
         return (value1/divider);
     }
 
-
-
-    private void createUMatrix(int row) {
-        System.out.println("Stop");
-        for (int i = 0; i < dataMatrix.getNumberOfColumns(); i++) {
-//            double d =
+    public String getClassForValues(double[] values) {
+        Matrix distances = new Matrix(numberOfClasses,1);
+        for (int i = 0; i < numberOfClasses; i++) {
+            double distance = calculateDistancesBetween(values, initialCentrosMatrix.getArrayAtRow(i));
+            distances.set(i, 0, distance);
         }
+
+        int membershipClassIndex = 0;
+        double bestMembership = 0;
+        for (int i = 0; i < numberOfClasses; i++) {
+            double membershipGrade = calculateMembershipGrade(i, 0, distances);
+            if (membershipGrade > bestMembership) {
+                bestMembership = membershipGrade;
+                membershipClassIndex = i;
+            }
+        }
+        return String.format("Clasificación: %s\nGrados de pertenencia %s", algorithmClasses[membershipClassIndex], bestMembership);
     }
 }
