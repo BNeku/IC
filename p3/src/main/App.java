@@ -73,7 +73,7 @@ public class App {
         DataSource dataSource = new DataSource();
         try {
             dataSource.loadData();
-            Borroso borroso =  new Borroso(dataSource.getDataMatrix(), dataSource.getCentrosMatrix(), 2);
+            Borroso borroso = new Borroso(dataSource.getDataMatrix(), dataSource.getCentrosMatrix());
             List<String> fileValues =  dataSource.readFile(testCaseFile).get(0);
             double[] values = new double[fileValues.size()-1];
             for (int i = 0; i < values.length; i++) {

@@ -15,19 +15,17 @@ public class Borroso {
     private double epsilon = 0.01;
     private String[] algorithmClasses;
 
-    public Borroso(Matrix dataMatrix, Matrix initialCentrosMatrix, int numberOfClasses) {
+    public Borroso(Matrix dataMatrix, Matrix initialCentrosMatrix) {
         this.dataMatrix = dataMatrix;
         this.initialCentrosMatrix = initialCentrosMatrix;
-        this.numberOfClasses = numberOfClasses;
+        this.algorithmClasses = new String[]{"Iris-setosa", "Iris-versicolor"};
+        this.numberOfClasses = algorithmClasses.length;
         this.membershipGradesMatrix = new Matrix(numberOfClasses, dataMatrix.getNumbeOfRows());
         this.distances = new Matrix(numberOfClasses, dataMatrix.getNumbeOfRows());
-        this.algorithmClasses = new String[]{"Iris-setosa", "Iris-versicolor"};
         boolean shouldIterate;
         do {
             shouldIterate = performIteration();
         } while (shouldIterate);
-
-        System.out.println("Terminé");
     }
 
     private boolean performIteration() {
