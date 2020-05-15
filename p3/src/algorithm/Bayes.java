@@ -19,10 +19,10 @@ public class Bayes {
     private void calculateAverages(){
 
         averageClass1.plusArray(data.get(0).getData());
-        averageClass1=averageClass1.divide(data.get(0).getM());
+        averageClass1=averageClass1.divide(data.get(0).getNumbeOfRows());
 
         averageClass2.plusArray(data.get(1).getData());
-        averageClass2=averageClass2.divide(data.get(1).getM());
+        averageClass2=averageClass2.divide(data.get(1).getNumbeOfRows());
 
     }
 

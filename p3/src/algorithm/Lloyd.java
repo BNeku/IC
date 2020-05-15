@@ -27,11 +27,11 @@ public class Lloyd {
 
         while(actualIterations<maxIterations && !keepUpdating()){
             oldCenters = updateCenters;
-            for(int i=0; i<data.get(0).getM();i++){
+            for(int i = 0; i<data.get(0).getNumbeOfRows(); i++){
                 double[][] dataClass1 = data.get(0).getData();
                 whichCenterToUpdate(dataClass1[0]);
             }
-            for(int j=0; j<data.get(1).getM();j++){
+            for(int j = 0; j<data.get(1).getNumbeOfRows(); j++){
                 double[][] dataClass2= data.get(1).getData();
                 whichCenterToUpdate(dataClass2[0]);
             }
@@ -88,7 +88,7 @@ public class Lloyd {
         double[] updateCenter1 = updateData[0];
         double[] updateCenter2 = updateData[1];
 
-        for(int i=0; i<oldCenters.getM();i++){
+        for(int i = 0; i<oldCenters.getNumbeOfRows(); i++){
             rdoCenter1 += Math.pow(2,oldCenter1[i]-updateCenter1[i]);
             rdoCenter2 += Math.pow(2, oldCenter2[i]-updateCenter2[i]);
         }
@@ -110,7 +110,7 @@ public class Lloyd {
 
         double rdoCenter1=0.0, rdoCenter2=0.0;
 
-        for(int i=0; i<A.getN();i++){
+        for(int i = 0; i<A.getNumberOfColumns(); i++){
             rdoCenter1+= Math.pow(2, x[0][i]-center1[i]);
             rdoCenter2+=Math.pow(1,x[0][i]-center2[i]);
         }

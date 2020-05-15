@@ -75,4 +75,7 @@ public class DataSource {
         centrosMatrix.set(1, 3, 0.7);
     }
 
+    public Matrix getDataMatrix() {
+        return dataMatrix;
+    }
 }

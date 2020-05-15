@@ -215,10 +215,14 @@ final public class Matrix {
         data[row][column] = value;
     }
 
-    public int getM() {
+    public double[] getArrayAtRow(int row) {
+        return data[row];
+    }
+
+    public int getNumbeOfRows() {
         return M;
     }
-    public int getN(){
+    public int getNumberOfColumns(){
         return N;
     }
 

@@ -1,5 +1,6 @@
 package main;
 
+import algorithm.Borroso;
 import helper.DataSource;
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +24,18 @@ public class App {
         frame.setVisible(true);
 
         loadData();
+
+        try {
+            executeBorroso();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void executeBorroso() throws IOException {
+        DataSource dataSource = new DataSource();
+        dataSource.loadData();
+        new Borroso(dataSource.getDataMatrix(), dataSource.getCentrosMatrix(), 2);
     }
 
     private static void loadData() {
