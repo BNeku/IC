@@ -24,8 +24,9 @@ public class DataSource {
     }
 
     public List<List<String>> readFile(String fileName) throws IOException {
-        String filePath = ClassLoader.getSystemResource(fileName).getPath();
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        ResourceHelper resourceHelper = new ResourceHelper();
+        InputStream inputStream = resourceHelper.getFileInputStream(fileName);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
         String currentLine;
         List<List<String>> data = new ArrayList<>();
         while ((currentLine = reader.readLine()) != null) {
