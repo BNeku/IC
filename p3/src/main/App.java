@@ -17,6 +17,7 @@ public class App {
     private JComboBox algorithmComboBox;
     private JButton executeAlgorithmButton;
     private JTextArea resultTextArea;
+    private JScrollPane resultScrollPanel;
     private final String[] testsCaseFiles = new String[]{"TestIris01.txt", "TestIris02.txt", "TestIris03.txt"};
 
     public static void main(String[] args) {
@@ -80,6 +81,7 @@ public class App {
             }
             String result = borroso.getClassForValues(values);
             resultTextArea.setText(result);
+            javax.swing.SwingUtilities.invokeLater(() -> resultScrollPanel.getVerticalScrollBar().setValue(0));
         } catch (IOException e) {
             e.printStackTrace();
         }

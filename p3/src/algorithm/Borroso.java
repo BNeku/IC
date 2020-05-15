@@ -107,6 +107,23 @@ public class Borroso {
                 membershipClassIndex = i;
             }
         }
-        return String.format("Clasificación: %s\nGrados de pertenencia %s", algorithmClasses[membershipClassIndex], bestMembership);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        String headerResult = String.format("Clasificación: %s\nGrado de pertenencia: %s", algorithmClasses[membershipClassIndex], bestMembership);
+        stringBuilder.append(headerResult);
+
+        stringBuilder.append("\n\nCentros\n");
+        for (int i = 0; i < initialCentrosMatrix.getNumberOfColumns(); i++) {
+            String value = String.format("x%d (%s, %s)\n", i+1, initialCentrosMatrix.get(0, i), initialCentrosMatrix.get(1, i));
+            stringBuilder.append(value);
+        }
+        stringBuilder.append("\n\n");
+        stringBuilder.append("Grados de pertenencia\n");
+        for (int i = 0; i < membershipGradesMatrix.getNumberOfColumns(); i++) {
+            String value = String.format("x%d (%s, %s)\n", i+1, membershipGradesMatrix.get(0, i), membershipGradesMatrix.get(1, i));
+            stringBuilder.append(value);
+        }
+
+        return stringBuilder.toString();
     }
 }
