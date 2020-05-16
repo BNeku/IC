@@ -58,11 +58,13 @@ public class App {
 
         switch (algorithmComboBox.getSelectedIndex()) {
             case 0:
+                executeBayes(testCaseFile);
                 break;
             case 1:
                 executeBorroso(testCaseFile);
                 break;
             case 2:
+                executeLloyd(testCaseFile);
                 break;
             default:
                 break;
@@ -87,30 +89,46 @@ public class App {
         }
     }
 
-    private static void loadData() {
+    private void executeBayes(String testCaseFile) {
+        DataSource dataSource = new DataSource();
         try {
-            DataSource d = new DataSource();
-            d.loadData();
-            List<Matrix> data = d.getClassesData();
-            Matrix centers = d.getCentrosMatrix();
+            dataSource.loadData();
+            Bayes bayes = new Bayes(dataSource.getClassesData());
 
-            //PRUEBAS DE LOS ALGORITMOS
-            Bayes algorithmBayes = new Bayes(data);
-            Lloyd algorithmLloyd = new Lloyd(data, 0.0000000001,10, centers);
+            List<String> fileValues =  dataSource.readFile(testCaseFile).get(0);
+            double[][] values = new double[1][fileValues.size()-1];
+            for (int i = 0; i < fileValues.size()-1; i++) {
+                values[0][i] = Double.parseDouble(fileValues.get(i));
+            }
+            Matrix M = new Matrix(values);
+            String result = bayes.whichClassBelongTo(M);
 
-            //ejemplos de los archivos
-            //AQUI ES DONDE TE DIGO QUE DEBERÍA LEER POR PANTALLA O DESDE UN ARCHIVO LOS DATOS
-            double[][] prueba = new double[1][4];
-            //prueba[0][0]=5.0;prueba[0][1]=3.5;prueba[0][2]=1.4;prueba[0][3]=0.2;
-            prueba[0][0]=6.9;prueba[0][1]=3.1;prueba[0][2]=4.9;prueba[0][3]=1.5;
-            //prueba[0][0]=5.0;prueba[0][1]=3.4;prueba[0][2]=1.5;prueba[0][3]=0.2;
-            Matrix M = new Matrix(prueba);
-            algorithmBayes.whichClassBelongTo(M);
-            algorithmLloyd.whichClassBelongTo(M);
-
-
+            resultTextArea.setText(result);
+            javax.swing.SwingUtilities.invokeLater(() -> resultScrollPanel.getVerticalScrollBar().setValue(0));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private void executeLloyd(String testCaseFile) {
+        DataSource dataSource = new DataSource();
+        try {
+            dataSource.loadData();
+            Lloyd lloyd = new Lloyd(dataSource.getClassesData(),0.0000000001,10,dataSource.getCentrosMatrix());
+
+            List<String> fileValues =  dataSource.readFile(testCaseFile).get(0);
+            double[][] values = new double[1][fileValues.size()-1];
+            for (int i = 0; i < fileValues.size()-1; i++) {
+                values[0][i] = Double.parseDouble(fileValues.get(i));
+            }
+            Matrix M = new Matrix(values);
+            String result = lloyd.whichClassBelongTo(M);
+
+            resultTextArea.setText(result);
+            javax.swing.SwingUtilities.invokeLater(() -> resultScrollPanel.getVerticalScrollBar().setValue(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

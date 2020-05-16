@@ -27,8 +27,9 @@ public class Bayes {
     }
 
     /*Para ver a que clase pertenece*/
-    public void whichClassBelongTo(Matrix A){
+    public String whichClassBelongTo(Matrix A){
         Matrix class1 = new Matrix(1,4), class2 = new Matrix(1,4);
+        String rdo="Clasificación: ";
 
         class1=A.minus(averageClass1);
         class2=A.minus(averageClass2);
@@ -37,12 +38,19 @@ public class Bayes {
         double distanceClass1 = class1.distanceBayes();
         double distanceClass2 = class2.distanceBayes();
 
-        System.out.print("Mediante el algoritmo de Bayes se ha calculado que ");
+
         if(distanceClass1<distanceClass2){
-            System.out.print("la muestra pertenece a la clase 1 "+data.get(0).getName()+"\n");
+            rdo+=data.get(0).getName()+"\n";
         }else{
-            System.out.print("la muestra pertenece a la clase 2 "+data.get(1).getName()+"\n");
+            rdo+=data.get(1).getName()+"\n";
         }
 
+        rdo+="Distancia con clase 1: "+distanceClass1+"\n";
+        rdo+="Distancia con clase 2: "+distanceClass2+"\n";
+        rdo+="\nMedias\n";
+        rdo+="Clase 1: ("+this.averageClass1.get(0,0)+", "+this.averageClass1.get(0,1)+", "+this.averageClass1.get(0,2)+", "+this.averageClass1.get(0,3)+")\n";
+        rdo+="Clase 2: ("+this.averageClass2.get(0,0)+", "+this.averageClass2.get(0,1)+", "+this.averageClass2.get(0,2)+", "+this.averageClass2.get(0,3)+")\n";
+
+        return rdo;
     }
 }

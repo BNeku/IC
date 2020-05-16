@@ -102,11 +102,12 @@ public class Lloyd {
         }
     }
 
-    public void whichClassBelongTo(Matrix A){
+    public String whichClassBelongTo(Matrix A){
         double[][] dataCenters=updateCenters.getData();
         double[] center1 = dataCenters[0];
         double[] center2 = dataCenters[1];
         double[][] x = A.getData();//muestra a comprobar
+        String rdo="Clasificación: ";
 
         double rdoCenter1=0.0, rdoCenter2=0.0;
 
@@ -115,12 +116,19 @@ public class Lloyd {
             rdoCenter2+=Math.pow(1,x[0][i]-center2[i]);
         }
 
-        System.out.print("Mediante el algoritmo de Lloyd se ha calculado que ");
         if(rdoCenter1<rdoCenter2){
-            System.out.print("la muestra pertenece a la clase 1 "+data.get(0).getName()+"\n");
+            rdo+=data.get(0).getName()+"\n";
         }else{
-            System.out.print("la muestra pertenece a la clase 2 "+data.get(1).getName()+"\n");
+            rdo+= data.get(1).getName()+"\n";
         }
+
+        rdo+="Distancia con clase 1: "+rdoCenter1+"\n";
+        rdo+="Distancia con clase 2: "+rdoCenter2+"\n";
+        rdo+="\nCentros\n";
+        rdo+="x1 ("+center1[0]+", "+center1[1]+", "+center1[2]+", "+center1[3]+")\n";
+        rdo+="x2 ("+center2[0]+", "+center2[1]+", "+center2[2]+", "+center2[3]+")\n";
+
+        return rdo;
     }
 
 
