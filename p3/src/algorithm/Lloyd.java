@@ -122,11 +122,11 @@ public class Lloyd {
             rdo+= data.get(1).getName()+"\n";
         }
 
-        rdo+="Distancia con clase 1: "+rdoCenter1+"\n";
-        rdo+="Distancia con clase 2: "+rdoCenter2+"\n";
+        rdo+= String.format("Distancia con clase 1: %.3f\n", rdoCenter1);
+        rdo+= String.format("Distancia con clase 2: %.3f\n", rdoCenter2);
         rdo+="\nCentros\n";
-        rdo+="x1 ("+center1[0]+", "+center1[1]+", "+center1[2]+", "+center1[3]+")\n";
-        rdo+="x2 ("+center2[0]+", "+center2[1]+", "+center2[2]+", "+center2[3]+")\n";
+        rdo+= String.format("x1 (%.3f, %.3f, %.3f, %.3f)\n", center1[0], center1[1], center1[2], center1[3]);
+        rdo+= String.format("x1 (%.3f, %.3f, %.3f, %.3f)\n", center2[0], center2[1], center2[2], center2[3]);
 
         return rdo;
     }

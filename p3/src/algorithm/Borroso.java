@@ -2,6 +2,8 @@ package algorithm;
 
 import utils.Matrix;
 
+import java.text.DecimalFormat;
+
 
 public class Borroso {
     private Matrix dataMatrix;
@@ -14,6 +16,7 @@ public class Borroso {
     //Tolerancia
     private double epsilon = 0.01;
     private String[] algorithmClasses;
+    private static DecimalFormat df2 = new DecimalFormat("#.##");
 
     public Borroso(Matrix dataMatrix, Matrix initialCentrosMatrix) {
         this.dataMatrix = dataMatrix;
@@ -107,18 +110,37 @@ public class Borroso {
         }
 
         StringBuilder stringBuilder = new StringBuilder();
-        String headerResult = String.format("Clasificación: %s\nGrado de pertenencia: %s", algorithmClasses[membershipClassIndex], bestMembership);
+        String headerResult = String.format("Clasificación: %s\nGrado de pertenencia: %.3f", algorithmClasses[membershipClassIndex], bestMembership);
         stringBuilder.append(headerResult);
 
         stringBuilder.append("\n\nCentros\n");
+        stringBuilder.append("x1 (");
         for (int i = 0; i < initialCentrosMatrix.getNumberOfColumns(); i++) {
-            String value = String.format("x%d (%s, %s)\n", i+1, initialCentrosMatrix.get(0, i), initialCentrosMatrix.get(1, i));
+            String comma = "";
+            if (i < initialCentrosMatrix.getNumberOfColumns()-1) {
+                comma = ", ";
+            }
+
+            String value = String.format("%.3f%s ",initialCentrosMatrix.get(0, i), comma);
             stringBuilder.append(value);
         }
+        stringBuilder.append(")\n");
+        stringBuilder.append("x2 (");
+        for (int i = 0; i < initialCentrosMatrix.getNumberOfColumns(); i++) {
+            String comma = "";
+            if (i < initialCentrosMatrix.getNumberOfColumns()-1) {
+                comma = ", ";
+            }
+
+            String value = String.format("%.3f%s ",initialCentrosMatrix.get(1, i), comma);
+            stringBuilder.append(value);
+        }
+        stringBuilder.append(")");
+
         stringBuilder.append("\n\n");
         stringBuilder.append("Grados de pertenencia\n");
         for (int i = 0; i < membershipGradesMatrix.getNumberOfColumns(); i++) {
-            String value = String.format("x%d (%s, %s)\n", i+1, membershipGradesMatrix.get(0, i), membershipGradesMatrix.get(1, i));
+            String value = String.format("x%d (%.3f, %.3f)\n", i+1, membershipGradesMatrix.get(0, i), membershipGradesMatrix.get(1, i));
             stringBuilder.append(value);
         }
 

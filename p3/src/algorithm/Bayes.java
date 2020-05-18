@@ -3,6 +3,8 @@ package algorithm;
 import java.util.List;
 import utils.Matrix;
 
+import static utils.Utils.decimal2Format;
+
 public class Bayes {
     private List<Matrix> data;
     private Matrix averageClass1;
@@ -45,11 +47,11 @@ public class Bayes {
             rdo+=data.get(1).getName()+"\n";
         }
 
-        rdo+="Distancia con clase 1: "+distanceClass1+"\n";
-        rdo+="Distancia con clase 2: "+distanceClass2+"\n";
+        rdo+="Distancia con clase 1: "+decimal2Format.format(distanceClass1)+"\n";
+        rdo+="Distancia con clase 2: "+decimal2Format.format(distanceClass2)+"\n";
         rdo+="\nMedias\n";
-        rdo+="Clase 1: ("+this.averageClass1.get(0,0)+", "+this.averageClass1.get(0,1)+", "+this.averageClass1.get(0,2)+", "+this.averageClass1.get(0,3)+")\n";
-        rdo+="Clase 2: ("+this.averageClass2.get(0,0)+", "+this.averageClass2.get(0,1)+", "+this.averageClass2.get(0,2)+", "+this.averageClass2.get(0,3)+")\n";
+        rdo+="Clase 1: ("+decimal2Format.format(this.averageClass1.get(0,0))+", "+decimal2Format.format(this.averageClass1.get(0,1))+", "+decimal2Format.format(this.averageClass1.get(0,2))+", "+decimal2Format.format(this.averageClass1.get(0,3))+")\n";
+        rdo+="Clase 2: ("+decimal2Format.format(this.averageClass2.get(0,0))+", "+decimal2Format.format(this.averageClass2.get(0,1))+", "+decimal2Format.format(this.averageClass2.get(0,2))+", "+decimal2Format.format(this.averageClass2.get(0,3))+")\n";
 
         return rdo;
     }
